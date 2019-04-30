@@ -18,15 +18,17 @@ INDEX Mængde_index (Mængde)
 
 CREATE TABLE if not exists Opskrifter (
 opskriftID int,
+Batch_navn varchar(45),
 Ændringsdato date,
 CONSTRAINT primary key pk1 (opskriftID, Ændringsdato)
 );
 
 
 CREATE TABLE if not exists Råvarebatch (
-batchID int,
+batchID int UNIQUE auto_increment,
 Producentnavn varchar(45),
-IngListeIBD int references Ingredientsliste.IngListeID,
+IngListeID int references Ingredientsliste.IngListeID,
+Mængde double,
 PRIMARY KEY (batchID, Producentnavn)
 );
 
@@ -48,13 +50,17 @@ Lagerdato varchar(45),
 INDEX Mængde_index (Mængde)
 );
 
-CREATE INDEX Mængde_index on Råvare_batch_lager ((Mængde) DESC));
+CREATE TABLE if not exists Råvare_batch_genbestillinger (
+Råvare_navn varchar(45) primary key references Råvare_batch_lager.Råvare_navn,
+Genbestilles boolean
+);
 
 
 CREATE TABLE if not exists Produktbatch (
-BatchID int primary key,
-BatchType varchar(45),
+BatchID int primary key auto_increment,
+Batch_Navn varchar(45) references Opskrifter.Batch_navn,
 Udløbsdato date,
+status varchar(45),
 foreign key (RBlisteID) references Råvare_batch_liste.RBlisteID
 );
 
@@ -76,5 +82,4 @@ CREATE TABLE if not exists Roller (
 BrugerID int references bruger.BrugerID ON DELETE CASCADE ,
 Rolle varchar(45),
 CONSTRAINT primary key pk1 (BrugerID, Rolle)
-
 );

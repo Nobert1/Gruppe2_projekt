@@ -3,17 +3,21 @@ import dto.*;
 import dao.*;
 import Exception.*;
 
+import java.util.List;
+
 
 public interface IProduktionsLederDAO extends IUserDAO {
-    public void createCommodityBatch();
-    public void DeleteCommodityBatch();
-    public void UpdateCommodityBatch();
-    public void ReadCommodity();
+    public void createCommodityBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException;
+    public void ReadCommodity() throws DALException;
+    public void UpdateCommodityBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException;
+
+    public void DeleteCommodityBatch(int batchID) throws DALException;
 
     public void CreateProductBatch();
-    public void StartProductBatch();
+    public List<ICommodityBatchDTO> StartProductBatch();
 
-    public void StartCommodityBatch();
+
+        public void StartCommodityBatch();
     //To forskellige ting?
     public void getStorageCommodityStatus();
     public void getStorageCommoditybatchStatus();

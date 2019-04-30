@@ -68,7 +68,7 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
                 statement2.setString(1, roleStrings.get(i));
                 statement2.addBatch();
             }
-            int rows2 = statement2.executeUpdate();
+            int[] rows2 = statement2.executeBatch();
             int rows = statement.executeUpdate();
 
             c.commit();

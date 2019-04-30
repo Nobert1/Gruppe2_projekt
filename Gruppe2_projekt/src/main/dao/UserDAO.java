@@ -8,6 +8,9 @@ import Exception.DALException;
 import dto.IUserDTO;
 import dto.*;
 
+/**
+ * Class more or less copypasted from s185031 2nd assignment, contains a few changes.
+ */
 public class UserDAO implements IUserDAO {
     private Connection createConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s185031?"

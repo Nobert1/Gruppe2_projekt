@@ -1,6 +1,5 @@
 package dao;
 
-import com.mysql.cj.protocol.Resultset;
 import dto.*;
 import dao.*;
 import Exception.*;
@@ -11,6 +10,10 @@ import java.util.Scanner;
 import java.util.*;
 
 import java.sql.*;
+
+/**
+ * Author - Gustav EMil Nobert s185031 and Martin Wassman s185029?
+ */
 
 public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
@@ -54,34 +57,64 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
     }
 
     @Override
-    public void removefromstorage() {
+    public void removefromstorage(List<ICommodityBatchDTO> list, int prodbatchID) {
         try (Connection c = createConnection()) {
-            PreparedStatement statement = c.prepareStatement("SELECT * FROM INGREDIENSLISTE WHERE IngListeID = (?)");
-            ResultSet resultset = statement.executeQuery();
+
             Scanner scan = new Scanner(System.in);
-            System.out.println("What batch would you like to produce today?");
-            statement.setInt(1, scan.nextInt());
             c.setAutoCommit(false);
-            String outprint = "take from the batches with the numbers ";
 
-            PreparedStatement statement1 = c.prepareStatement
-                    ("SELECT * FROM Råvare_batch_lager WHERE Råvare_navn = " + resultset.getString("Råvare_navn") +
-                            " AND MIN(Mængde) FROM Råvare_batch_lager WHERE Mængde > " + resultset.getInt("Mængde"));
 
-            PreparedStatement statement2 = c.prepareStatement("UPDATE Råvare_batch_lager WHERE ID = (?) SET Mængde (?)");
+            PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager WHERE ID = (?) SET Mængde (?)");
+            for (ICommodityBatchDTO commodityBatchDTO : list) {
 
-            while (resultset.next()) {
-            ResultSet resultset1 = statement1.executeQuery();
-            if (resultset1.next()) {
-            outprint += resultset1.getInt("BatchID") + "\n";
-            statement2.setInt(1, resultset1.getInt("BatchID"));
-            statement2.setInt(2, resultset1.getInt("Mængde") - resultset.getInt("Mængde"));
-            statement2.addBatch();
+                System.out.println("you need to withdraw " + commodityBatchDTO.getMængde() + " from batch number = " + commodityBatchDTO.getMængde());
+                System.out.println("how much did you withdraw?");
+                int withdrawen = scan.nextInt();
+
+                while (withdrawen >= commodityBatchDTO.getMængde() * 0.98 && commodityBatchDTO.getMængde() * 1.02 >= withdrawen) {
+                    System.out.println("withdrawn amount not within the boundaries, please withdraw agian");
+                    System.out.println("How much did you withdraw?");
+                    withdrawen = scan.nextInt();
+                }
+
+                statement1.setInt(1, commodityBatchDTO.getBatchID());
+                statement1.setDouble(2, commodityBatchDTO.getMængde() - withdrawen);
+                statement1.addBatch();
             }
-            }
-            int [] rows = statement2.executeBatch();
-            System.out.println(outprint);
+
+            PreparedStatement statement2 = c.prepareStatement("UPDATE Productbatch WHERE ID = (?) SET status = (?)");
+            statement2.setInt(1, prodbatchID);
+            statement2.setString(2, "under production");
+            int row = statement2.executeUpdate();
+            int[] rows = statement1.executeBatch();
             c.commit();
+        } catch (SQLException e) {
+            e.getMessage();
+        }
+    }
+
+    public void finishBatch(int prodbatchID) {
+
+        try (Connection c = createConnection()) {
+
+            c.setAutoCommit(false);
+            PreparedStatement statement = c.prepareStatement("UPDATE Productbatch WHERE ID = (?) SET status = (?), Udløbsdato = (?)");
+
+            PreparedStatement statement1 = c.prepareStatement("SELECT * FROM INGREDIENSLISTE WHERE IngListeID = (?)");
+            ResultSet resultset1 = statement.executeQuery();
+
+            statement.setInt(1, prodbatchID);
+            statement.setString(2, "under production");
+
+            if (resultset1.next()) {
+                LocalDate localDate = LocalDate.now();
+                LocalDate localDate1 = localDate.plusDays(resultset1.getInt("Opbevarings_dage"));
+                statement.setDate(3, Date.valueOf(localDate1));
+            }
+
+            int row = statement.executeUpdate();
+            c.commit();
+
         } catch (SQLException e) {
             e.getMessage();
         }
