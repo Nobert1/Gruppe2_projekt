@@ -2,84 +2,67 @@
 Tabellerne ser sådan her ud (endnu ikke oprettet i min database da jeg bliver ved med at lave ændringer.)
 
 
-CREATE TABLE if not exists Ingrediensliste (
-Råvare_navn varchar(45) UNIQUE,
-Mængde double,
-IngListeID int primary key references Opskrifter.opskriftID
-);
-
-CREATE TABLE if not exists Råvare_lager (
-Råvare_navn varchar(45) primary key references Ingrediensliste.Råvare_navn,
-Mængde double,
-Lager_dato date,
-genbestilles boolean,
-INDEX Mængde_index (Mængde)
-);
-
-CREATE TABLE if not exists Opskrifter (
-opskriftID int,
-Batch_navn varchar(45),
-Ændringsdato date,
-CONSTRAINT primary key pk1 (opskriftID, Ændringsdato)
-);
 
 
-CREATE TABLE if not exists Råvarebatch (
-batchID int UNIQUE auto_increment,
-Producentnavn varchar(45),
-IngListeID int references Ingredientsliste.IngListeID,
-Mængde double,
-PRIMARY KEY (batchID, Producentnavn)
-);
+    CREATE TABLE if not exists Opskrifter (
+    opskriftID int UNIQUE AUTO_INCREMENT,
+    Produktnavn varchar(45),
+    Ændringsdato date,
+    versionsnummer int,
+    status varchar(45),
+    CONSTRAINT primary key pk1 (opskriftID, Ændringsdato)
+    );
 
-CREATE TABLE if not exists Råvare_batch_liste (
-RBlisteID int primary key,
-Producentnavn varchar(45),
-BatchID int,
-foreign key (Producentnavn) references råvarebatch.Producentnavn,
-foreign key (BatchID) references Råvarebatch.batchID
-);
-
+    CREATE TABLE if not exists Ingrediensliste (
+    Råvare_navn varchar(45),
+    Mængde double,
+    IngListeID int primary key references Opskrifter.opskriftID
+    );
 
 
-CREATE TABLE if not exists Råvare_batch_lager (
-BatchID int primary key references Råvarebatch.batchID,
-Mængde double,
-Råvare_navn varchar(45),
-Lagerdato varchar(45),
-INDEX Mængde_index (Mængde)
-);
+    CREATE TABLE if not exists Produktbatch (
+    ProduktbatchID int primary key auto_increment,
+    Produktnavn varchar(45) references Opskrifter.Batch_navn,
+    Udløbsdato date,
+    status varchar(45)
+    );
 
-CREATE TABLE if not exists Råvare_batch_genbestillinger (
-Råvare_navn varchar(45) primary key references Råvare_batch_lager.Råvare_navn,
-Genbestilles boolean
-);
+    CREATE TABLE if not exists Råvare_batch_liste (
+    Råvarebatch_liste_ID int primary key references Produktbatch.ProduktbatchID,
+    Producentnavn varchar(45),
+    RåvarebatchID int
+    );
 
 
-CREATE TABLE if not exists Produktbatch (
-BatchID int primary key auto_increment,
-Batch_Navn varchar(45) references Opskrifter.Batch_navn,
-Udløbsdato date,
-status varchar(45),
-foreign key (RBlisteID) references Råvare_batch_liste.RBlisteID
-);
+    CREATE TABLE if not exists Råvare_batch_lager (
+    BatchID int primary key references Råvarebatch.batchID,
+    producentnavn varchar(45),
+    Mængde double,
+    Råvare_navn varchar(45),
+    rest boolean,
+    INDEX Mængde_index (Mængde)
+    );
 
-CREATE TABLE if not exists Produktbatch_beskrivelse (
-BatchType varchar(45) UNIQUE primary key references Produktbatch.Batchtype,
-Opbevarings_dage int,
-Styktal int,
-opskriftID int,
-foreign key (opskriftID) references Opskrifter.opskriftID
-);
+    CREATE TABLE if not exists Genbestillingsliste (
+    Råvare_navn varchar(45) primary key UNIQUE references Råvare_batch_lager.Råvare_navn,
+    Genbestilles boolean
+    );
 
-CREATE TABLE if not exists Bruger (
-BrugerID int primary key,
-brugerNavn varchar(45),
-Initialer varchar (45)
-);
 
-CREATE TABLE if not exists Roller (
-BrugerID int references bruger.BrugerID ON DELETE CASCADE ,
-Rolle varchar(45),
-CONSTRAINT primary key pk1 (BrugerID, Rolle)
-);
+    CREATE TABLE if not exists Produktbatch_beskrivelse (
+    BatchType varchar(45) ,
+    Opbevarings_dage int,
+    opskriftID int UNIQUE primary key references Opskrifter.opskriftID
+    );
+
+    CREATE TABLE if not exists Bruger (
+    BrugerID int primary key,
+    brugerNavn varchar(45),
+    Initialer varchar (45)
+    );
+
+    CREATE TABLE if not exists Roller (
+    BrugerID int references bruger.BrugerID ON DELETE CASCADE,
+    Rolle varchar(45),
+    CONSTRAINT primary key pk1 (BrugerID, Rolle)
+    );

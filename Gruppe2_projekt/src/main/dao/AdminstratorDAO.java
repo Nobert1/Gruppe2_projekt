@@ -1,6 +1,5 @@
 package dao;
 
-import dto.IAdminstratorDTO;
 import dto.IUserDTO;
 import Exception.*;
 

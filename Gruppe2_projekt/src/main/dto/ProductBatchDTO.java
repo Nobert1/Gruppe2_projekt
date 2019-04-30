@@ -43,7 +43,8 @@ public class ProductBatchDTO implements Serializable, IProductBatchDTO {
     public void setStatus(String status) {
         this.status = status;
     }
-    private IProductBatchDTO makeproductBatchFromResultset(ResultSet resultSet) throws SQLException {
+
+    public IProductBatchDTO makeproductBatchFromResultset(ResultSet resultSet) throws SQLException {
 
     IProductBatchDTO productBatchDTO = new ProductBatchDTO();
             productBatchDTO.setBatchID(resultSet.getInt("BatchID"));

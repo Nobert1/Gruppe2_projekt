@@ -1,10 +1,7 @@
 package dao;
 
-import dto.IAdminstratorDTO;
 import dto.*;
-import dao.*;
 import Exception.*;
-import java.util.List;
 
 public interface IAdminstratorDAO extends IUserDAO  {
     //Create
