@@ -17,48 +17,13 @@ import java.sql.*;
 
 public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
-    private Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s185031?"
-                + "user=s185031&password=UfudYEA2p7RmipWZXxT2R");
-    }
+
+
+
 
     @Override
-    public void producebatch() {
-        try (Connection c = createConnection()) {
-            c.setAutoCommit(false);
-            Scanner scan = new Scanner(System.in);
-            System.out.println("What is the type of thy batch? ");
-            String input = scan.nextLine();
-            PreparedStatement statement = c.prepareStatement
-                    ("SELECT * FROM Produktbatch_beskrivelse WHERE Produktbatch_beskrivelse.type = (?)");
-            statement.setString(1, input);
-            ResultSet resultset = statement.executeQuery();
-            PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (default, ?, ?, ?)");
-            statement2.setString(2, input);
-            int IngrediensListeID;
-
-            if (resultset.next()) {
-                LocalDate localDate = LocalDate.now();
-                LocalDate localDate1 = localDate.plusDays(resultset.getInt("Opbevarings_dage"));
-                statement2.setDate(3, Date.valueOf(localDate1));
-                IngrediensListeID = resultset.getInt("opskriftID");
-            }
-            PreparedStatement statement1 = c.prepareStatement
-                    ("SELECT * FROM Produktbatch_beskrivelse WHERE Produktbatch_beskrivelse.type = (?)");
-            int rows = statement2.executeUpdate();
-
-            c.commit();
-            /**
-             * Der skal også fjernes fra lageret, forbindelsen til lageret oprettes igennem opskrifter -> ingredienslister -> råvarelager
-             */
-        } catch (SQLException e) {
-            e.getMessage();
-        }
-    }
-
-    @Override
-    public void removefromstorage(List<ICommodityBatchDTO> list, int prodbatchID) {
-        try (Connection c = createConnection()) {
+    public void prepareProductBatch(List<ICommodityBatchDTO> list, int prodbatchID) {
+        try (Connection c = DataSource.getConnection()) {
 
             Scanner scan = new Scanner(System.in);
             c.setAutoCommit(false);
@@ -93,18 +58,21 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
         }
     }
 
-    public void finishBatch(int prodbatchID) {
+    public void finishBatch(IProductBatchDTO productBatchDTO) {
 
-        try (Connection c = createConnection()) {
+        try (Connection c = DataSource.getConnection()) {
 
             c.setAutoCommit(false);
-            PreparedStatement statement = c.prepareStatement("UPDATE Productbatch WHERE ID = (?) SET status = (?), Udløbsdato = (?)");
+            PreparedStatement statement = c.prepareStatement("UPDATE Productbatch WHERE ProduktbatchID = (?) SET status = (?), Udløbsdato = (?)");
 
-            PreparedStatement statement1 = c.prepareStatement("SELECT * FROM INGREDIENSLISTE WHERE IngListeID = (?)");
-            ResultSet resultset1 = statement.executeQuery();
 
-            statement.setInt(1, prodbatchID);
-            statement.setString(2, "under production");
+            PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Produktbatch_beskrivelse WHERE BatchType = (?)");
+            statement1.setString(1, productBatchDTO.getProduktnavn());
+            ResultSet resultset1 = statement1.executeQuery();
+
+
+            statement.setInt(1, productBatchDTO.getBatchID());
+            statement.setString(2, "finished");
 
             if (resultset1.next()) {
                 LocalDate localDate = LocalDate.now();

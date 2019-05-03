@@ -1,44 +1,48 @@
 package dto;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 public class ProductBatchDTO implements Serializable, IProductBatchDTO {
 
     int batchID;
-    String batch_navn;
-    Date expiringdate;
+    String Produktnavn;
+    java.sql.Date expiringdate;
     String status;
 
-    public Date getExpiringdate() {
-        return expiringdate;
-    }
 
     public int getBatchID() {
         return batchID;
     }
 
-    public String getBatch_navn() {
-        return batch_navn;
+    public String getProduktnavn() {
+        return Produktnavn;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setBatch_navn(String batch_navn) {
-        this.batch_navn = batch_navn;
+    @Override
+    public Date getExpiringdate() {
+        return expiringdate;
+    }
+
+    @Override
+    public void setExpiringdate(java.util.Date expiringdate) {
+
+    }
+
+    public void setProduktnavn(String Produktnavn) {
+        this.Produktnavn = Produktnavn;
     }
 
     public void setBatchID(int batchID) {
         this.batchID = batchID;
     }
 
-    public void setExpiringdate(Date expiringdate) {
-        this.expiringdate = expiringdate;
-    }
 
     public void setStatus(String status) {
         this.status = status;
@@ -48,7 +52,7 @@ public class ProductBatchDTO implements Serializable, IProductBatchDTO {
 
     IProductBatchDTO productBatchDTO = new ProductBatchDTO();
             productBatchDTO.setBatchID(resultSet.getInt("BatchID"));
-            productBatchDTO.setBatch_navn(resultSet.getString("Batch_navn"));
+            productBatchDTO.setProduktnavn(resultSet.getString("Batch_navn"));
             productBatchDTO.setExpiringdate(resultSet.getDate("Udløbsdato"));
             productBatchDTO.setStatus(resultSet.getString("status"));
 

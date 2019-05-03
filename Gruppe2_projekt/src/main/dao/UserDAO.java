@@ -12,10 +12,7 @@ import dto.*;
  * Class more or less copypasted from s185031 2nd assignment, contains a few changes.
  */
 public class UserDAO implements IUserDAO {
-    private Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s185031?"
-                + "user=s185031&password=UfudYEA2p7RmipWZXxT2R");
-    }
+
     @Override
     public IUserDTO getUser(int userId) throws DALException {
 
@@ -23,7 +20,7 @@ public class UserDAO implements IUserDAO {
         //TODO Implement this - should retrieve a user from db and parse it to a UserDTO
 
 
-        try (Connection c = createConnection()){
+        try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
             PreparedStatement statement = c.prepareStatement(SQL);
             statement.setInt(1, userId);
@@ -50,7 +47,7 @@ public class UserDAO implements IUserDAO {
 
         // Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
 
-        try (Connection c = createConnection()){
+        try (Connection c = DataSource.getConnection()) {
 
             Statement statement = c.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM users JOIN roles ON users.userId = roles.userId");

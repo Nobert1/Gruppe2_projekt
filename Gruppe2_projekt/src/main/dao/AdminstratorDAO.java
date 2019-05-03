@@ -12,14 +12,11 @@ import java.util.List;
 
 public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
 
-    private Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s185031?"
-                + "user=s185031&password=UfudYEA2p7RmipWZXxT2R");
-    }
+
 
     @Override
     public void createUser(IUserDTO user) throws DALException {
-        try (Connection c = createConnection()){
+        try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
             PreparedStatement usersstatement = c.prepareStatement("INSERT INTO users VALUES (?, ?, ?)");
             String roleString = String.join(";", user.getRoles());
@@ -50,7 +47,7 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
     @Override
     public void updateUser(IUserDTO user) throws DALException {
 
-        try (Connection c = createConnection()){
+        try (Connection c = DataSource.getConnection()){
 
             c.setAutoCommit(false);
 
@@ -79,7 +76,7 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
     }
     @Override
     public void deleteUser(int userId) throws DALException {
-        try (Connection c = createConnection()){
+        try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
             PreparedStatement statement = c.prepareStatement("DELETE FROM users WHERE userId = ?");
             statement.setInt(1, userId);

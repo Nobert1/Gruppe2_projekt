@@ -1,9 +1,12 @@
 package dao;
 
+import com.sun.jndi.ldap.pool.PooledConnectionFactory;
 import dto.*;
 import dao.*;
 import Exception.*;
 
+import javax.sql.*;
+import javax.transaction.xa.XAResource;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,20 +15,15 @@ import java.util.Scanner;
 
 public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO {
 
-    private Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s185031?"
-                + "user=s185031&password=UfudYEA2p7RmipWZXxT2R");
-    }
-
-
-    @Override
+        @Override
     public void createCommodityBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException {
-        try (Connection c = createConnection()){
+        try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
-            PreparedStatement statement = c.prepareStatement("INSERT INTO Råvarebatch VALUES (default , ?, ?, ?)");
-            statement.setString(1, commodityBatchDTO.getProducerName());
-            statement.setInt(2, commodityBatchDTO.getingredientlistID());
-            statement.setDouble(3, commodityBatchDTO.getMængde());
+            PreparedStatement statement = c.prepareStatement("INSERT INTO Råvarebatch VALUES (? , ?, ?, ?)");
+            statement.setInt(1, commodityBatchDTO.getBatchID());
+            statement.setString(2, commodityBatchDTO.getProducerName());
+            statement.setInt(3, commodityBatchDTO.getingredientlistID());
+            statement.setDouble(4, commodityBatchDTO.getMængde());
 
             int row = statement.executeUpdate();
             c.commit();
@@ -37,7 +35,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
     @Override
     public void DeleteCommodityBatch(int batchID) throws DALException {
-        try (Connection c = createConnection()) {
+        try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
 
             PreparedStatement statement = c.prepareStatement("DELETE FROM Råvarebatch WHERE batchID = ?");
@@ -52,13 +50,23 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     }
 
     @Override
-    public void CreateProductBatch() {
+    public void CreateProductBatch(IProductBatchDTO productBatchDTO) throws DALException {
+        try (Connection c = DataSource.getConnection()){
+            c.setAutoCommit(false);
+            PreparedStatement statement = c.prepareStatement("INSERT INTO Råvarebatch VALUES (default , ?, ?, ?)");
+            statement.setString(1, productBatchDTO.getProduktnavn());
+            statement.setDate(2, productBatchDTO.getExpiringdate());
+            statement.setString(3, productBatchDTO.getStatus());
 
+
+        } catch (SQLException e) {
+            throw new DALException(e.getMessage());
+        }
     }
 
     @Override
     public void UpdateCommodityBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException {
-        try (Connection c = createConnection()) {
+        try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
 
 
@@ -78,7 +86,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
     @Override
     public void ReadCommodity() throws DALException {
-        try (Connection c = createConnection()) {
+        try (Connection c = DataSource.getConnection()) {
             PreparedStatement statement = c.prepareStatement("SELECT * FROM Produktbatch where BatchID = (?)");
             ResultSet resultSet = statement.executeQuery();
             IProductBatchDTO productBatchDTO = new ProductBatchDTO();
@@ -93,20 +101,21 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
 
     @Override
-    public List<ICommodityBatchDTO> StartProductBatch()  {
+    public List<ICommodityBatchDTO> StartProductBatch(IProductBatchDTO productBatchDTO)  {
         List<ICommodityBatchDTO> CommoditybatchList = new ArrayList<>();
 
-        try (Connection c = createConnection()) {
+        try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
-            PreparedStatement statement = c.prepareStatement("SELECT * FROM INGREDIENSLISTE WHERE IngListeID = (?)");
+            PreparedStatement statement = c.prepareStatement("SELECT Råvare_navn, Mængde FROM Ingrediensliste " +
+                    "JOIN Opskrifter ON Opskrifter.opskriftID = Ingrediensliste.IngListeID WHERE Opskrifter.Produktnavn = (?)");
 
-            Scanner scan = new Scanner(System.in);
-            System.out.println("What product batch would you like to produce today? Please type in the Ingridentlist ID");
-            int IngrediensListeID = scan.nextInt();
-            statement.setInt(1, IngrediensListeID);
+            /**
+             * Kan det her ikke være et join i stedet måske? - Gustav
+             * */
+
+            statement.setString(1, productBatchDTO.getProduktnavn());
 
 
-            String outprint = "take the commodity batches with the numbers ";
             //Statement virker på workbench, test om det også virker her
             PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Råvare_batch_lager WHERE Råvare_navn = (?) HAVING MIN(Mængde) > (?)");
 
@@ -119,38 +128,20 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
                 commodityBatchDTO.setBatchID(resultSet1.getInt("BatchID"));
                 commodityBatchDTO.setMængde(resultSet1.getDouble("Mængde"));
                 CommoditybatchList.add(commodityBatchDTO);
-                outprint += resultSet1.getInt("BatchID") + "\n";
             }
-                System.out.println(outprint);
-
-            PreparedStatement statement2 = c.prepareStatement("SELECT Batch_navn FROM Opskrifter WHERE opskriftID = (?)");
-            statement2.setInt(1, IngrediensListeID);
-            ResultSet resultSet2 = statement2.executeQuery();
-
-
-
+            
             //Det her skal vel være en join af en art...... skal vidst også oprette det objekt der bliver sat ind.
 
-            String batch_name = resultSet2.getString("Batch_navn");
+            PreparedStatement statement3 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, ?, null, ?)");
+            statement3.setInt(1, productBatchDTO.getBatchID());
+            statement3.setString(2, productBatchDTO.getProduktnavn());
+            //Den sidste værdi sættes til null da det er udløbsdato. Udløbsdato er først fastlagt når produktet er klar.
+            statement3.setString(3, "Awaiting production");
 
-            PreparedStatement statement3 = c.prepareStatement("SELECT * FROM Produktbatch_beskrivelse WHERE Produktbatch_beskrivelse.type = (?)");
-            statement3.setString(1, batch_name);
-
-            PreparedStatement statement4 = c.prepareStatement("INSERT INTO Produktbatch VALUES (default, ?, null, ?)");
-            statement4.setString(1, batch_name);
-
-                if (resultset.next()) {
-                    LocalDate localDate = LocalDate.now();
-                    LocalDate localDate1 = localDate.plusDays(resultset.getInt("Opbevarings_dage"));
-                    statement4.setDate(2, Date.valueOf(localDate1));
-                }
-                statement4.setString(2, "Awaiting production");
-                int rows = statement4.executeUpdate();
+                int rows = statement3.executeUpdate();
 
                 c.commit();
-                /**
-                 * Der skal også fjernes fra lageret, forbindelsen til lageret oprettes igennem opskrifter -> ingredienslister -> råvarelager
-                 */
+
             } catch (SQLException e) {
                 e.getMessage();
             }

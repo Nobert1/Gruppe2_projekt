@@ -7,15 +7,15 @@ import java.util.Date;
 public interface IProductBatchDTO {
 
 
-    public Date getExpiringdate();
+    public java.sql.Date getExpiringdate();
 
     public int getBatchID();
 
-    public String getBatch_navn();
+    public String getProduktnavn();
 
     public String getStatus();
 
-    public void setBatch_navn(String batch_navn);
+    public void setProduktnavn(String Produktnavn);
 
     public void setBatchID(int batchID);
 
