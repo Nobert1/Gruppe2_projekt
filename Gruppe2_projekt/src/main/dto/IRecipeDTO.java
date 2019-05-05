@@ -1,6 +1,7 @@
 package dto;
 
 import java.util.Date;
+import java.util.List;
 
 public interface IRecipeDTO {
 
@@ -15,6 +16,10 @@ public interface IRecipeDTO {
     public void setProductName(String productName);
     public void setVolume(double volume);
     public void setRecipeID(int recipeID);
+
+    public List<IIngredientListDTO> getIngredientListDTOList();
+    public void setIngredientListDTOList(List<IIngredientListDTO> ingredientListDTOList);
+
 
     public void setVersionnumber(int versionnumber);
 }

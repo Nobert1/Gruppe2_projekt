@@ -7,8 +7,8 @@ import Exception.*;
 import java.util.List;
 
 public interface ILaborantDAO extends IUserDAO {
-    public void producebatch();
-    public void prepareProductBatch(List<ICommodityBatchDTO> list, int inglistID);
 
+    void prepareProductBatch(IProductBatchDTO productBatchDTO);
 
-    }
+    void finishBatch(IProductBatchDTO productBatchDTO);
+}

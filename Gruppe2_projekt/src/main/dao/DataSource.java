@@ -8,6 +8,10 @@ import java.sql.SQLException;
 
 public class DataSource {
 
+    /**
+     * Meget simpel klasse, bruger Hikaris data pooling framework til at lave noget connection pooling.
+     */
+
     private static HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;
 

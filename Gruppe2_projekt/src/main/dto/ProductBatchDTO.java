@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ProductBatchDTO implements Serializable, IProductBatchDTO {
 
@@ -11,7 +12,15 @@ public class ProductBatchDTO implements Serializable, IProductBatchDTO {
     String Produktnavn;
     java.sql.Date expiringdate;
     String status;
+    List<ICommodityBatchDTO> commodityBatchDTOList;
 
+    public List<ICommodityBatchDTO> getCommodityBatchDTOList() {
+        return commodityBatchDTOList;
+    }
+
+    public void setCommodityBatchDTOList(List<ICommodityBatchDTO> commodityBatchDTOList) {
+        this.commodityBatchDTOList = commodityBatchDTOList;
+    }
 
     public int getBatchID() {
         return batchID;

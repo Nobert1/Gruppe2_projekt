@@ -11,6 +11,9 @@ import java.util.*;
 
 import java.sql.*;
 
+
+    //TODO Jeg ved ikke helt hvad den her klasse den har brug for.
+
 /**
  * Author - Gustav EMil Nobert s185031 and Martin Wassman s185029?
  */
@@ -18,11 +21,8 @@ import java.sql.*;
 public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
 
-
-
-
     @Override
-    public void prepareProductBatch(List<ICommodityBatchDTO> list, int prodbatchID) {
+    public void prepareProductBatch(IProductBatchDTO productBatchDTO) {
         try (Connection c = DataSource.getConnection()) {
 
             Scanner scan = new Scanner(System.in);
@@ -30,7 +30,11 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
 
             PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager WHERE ID = (?) SET Mængde (?)");
-            for (ICommodityBatchDTO commodityBatchDTO : list) {
+
+//Her ville det måske være fedt at lave noget andet end input scan. Men vi skal jo netop bruge noget input så der vel ingen anden måde at gøre det på.
+
+
+            for (ICommodityBatchDTO commodityBatchDTO : productBatchDTO.getCommodityBatchDTOList()) {
 
                 System.out.println("you need to withdraw " + commodityBatchDTO.getMængde() + " from batch number = " + commodityBatchDTO.getMængde());
                 System.out.println("how much did you withdraw?");
@@ -48,7 +52,7 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             }
 
             PreparedStatement statement2 = c.prepareStatement("UPDATE Productbatch WHERE ID = (?) SET status = (?)");
-            statement2.setInt(1, prodbatchID);
+            statement2.setInt(1, productBatchDTO.getBatchID());
             statement2.setString(2, "under production");
             int row = statement2.executeUpdate();
             int[] rows = statement1.executeBatch();
@@ -58,6 +62,7 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
         }
     }
 
+    @Override
     public void finishBatch(IProductBatchDTO productBatchDTO) {
 
         try (Connection c = DataSource.getConnection()) {
@@ -87,4 +92,6 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             e.getMessage();
         }
     }
-}
+
+
+    }

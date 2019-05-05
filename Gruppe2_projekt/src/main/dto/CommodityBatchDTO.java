@@ -12,11 +12,35 @@ public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
     private String producername;
     private int InglisteID;
     private Double Mængde;
+    private String CommodityName;
+    private boolean remainder;
+
+    @Override
+    public boolean isRemainder() {
+        return remainder;
+    }
+
+    @Override
+    public void setRemainder(boolean remainder) {
+        this.remainder = remainder;
+    }
 
     @Override
     public int getBatchID() {
         return this.batchID;
     }
+
+    @Override
+    public String getCommodityName() {
+        return CommodityName;
+    }
+
+
+    @Override
+    public void setCommodityName(String commodityName) {
+        CommodityName = commodityName;
+    }
+
 
     @Override
     public String getProducerName() {

@@ -2,6 +2,7 @@ package dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class RecipeDTO implements Serializable, IRecipeDTO {
 
@@ -11,6 +12,7 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
     int versionnumber;
     String status;
     double volume;
+    List<IIngredientListDTO> ingredientListDTOList;
 
     public Date getChangeDate() {
         return changeDate;
@@ -20,7 +22,9 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
         return status;
     }
 
+    public List<IIngredientListDTO> getIngredientListDTOList() { return ingredientListDTOList; }
 
+    public void setIngredientListDTOList(List<IIngredientListDTO> ingredientListDTOList) { this.ingredientListDTOList = ingredientListDTOList; }
 
     public int getRecipeID() {
         return recipeID;

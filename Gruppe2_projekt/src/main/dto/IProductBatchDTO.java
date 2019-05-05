@@ -3,6 +3,7 @@ package dto;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 public interface IProductBatchDTO {
 
@@ -12,7 +13,8 @@ public interface IProductBatchDTO {
     public int getBatchID();
 
     public String getProduktnavn();
-
+    public List<ICommodityBatchDTO> getCommodityBatchDTOList();
+    public void setCommodityBatchDTOList(List<ICommodityBatchDTO> commodityBatchDTOList);
     public String getStatus();
 
     public void setProduktnavn(String Produktnavn);

@@ -20,4 +20,12 @@ public interface ICommodityBatchDTO {
 
     public ICommodityBatchDTO makeCommodityBatchFromResultset(ResultSet resultSet) throws SQLException;
 
+    public String getCommodityName();
+
+    public void setCommodityName(String commodityName);
+
+    public boolean isRemainder();
+
+    public void setRemainder(boolean remainder);
+
     }

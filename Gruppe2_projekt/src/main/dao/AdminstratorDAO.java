@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
 
-
+    //TODO as of 05-05-2019 er denne her præcis den samme som den var i anden jdbc aflevering. Spørgsmålet er om den også skal have noget rolle validering?
 
     @Override
     public void createUser(IUserDTO user) throws DALException {
@@ -33,7 +33,6 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
                 rolesstatement.setString(2, roleList.get(i));
                 rolesstatement.addBatch();
             }
-
 
             int userrows = usersstatement.executeUpdate();
             int rolesrow = rolesstatement.executeUpdate();
