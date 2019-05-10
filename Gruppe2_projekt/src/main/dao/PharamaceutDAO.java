@@ -35,7 +35,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             //TODO Skal vi lade objektet have det her eller nah?
 
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Ingrediensliste ((?),(?),(?), (?))");
-            //Da værdien ikke er indsat endnu, skal der lige et + 1 på :)
+            //Da værdien ikke er indsat endnu, skal der lige et + 1 på :)æ
 
                 statement2.setInt(3, recipeDTO.getRecipeID());
                 statement2.setInt(4, recipeDTO.getVersionnumber());
@@ -116,10 +116,26 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
     }
 
     @Override
-    public void deleteRecipe() {
+    public void deleteRecipe(int recipeID, int versionNumber) {
         /**
          * SKal man overhovedet kunne det her?
          * Skal vi bare lave den alligevel?
          */
+
+        try (Connection c = DataSource.getConnection()) {
+            c.setAutoCommit(false);
+
+            PreparedStatement statement = c.prepareStatement("DELETE FROM Opskrifter WHERE opskriftID = (?) AND versionsnummer = (?)");
+
+            statement.setInt(1, recipeID);
+            statement.setInt(2, versionNumber);
+
+            statement.execute();
+
+            c.commit();
+
+        } catch(SQLException e){
+        e.getMessage();
+    }
     }
 }

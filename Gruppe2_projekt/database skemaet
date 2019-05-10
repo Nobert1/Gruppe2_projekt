@@ -3,66 +3,69 @@ Tabellerne ser sådan her ud (endnu ikke oprettet i min database da jeg bliver v
 
 
 
+CREATE TABLE if not exists Opskrifter (
+opskriftID int UNIQUE AUTO_INCREMENT,
+Produktnavn varchar(45),
+Ændringsdato date,
+versionsnummer int,
+status varchar(45),
+CONSTRAINT primary key pk1 (opskriftID, versionsnummer)
+);
 
-    CREATE TABLE if not exists Opskrifter (
-    opskriftID int UNIQUE AUTO_INCREMENT,
-    Produktnavn varchar(45),
-    Ændringsdato date,
-    versionsnummer int,
-    status varchar(45),
-    CONSTRAINT primary key pk1 (opskriftID, Ændringsdato)
-    );
+CREATE TABLE if not exists Ingrediensliste (
+Råvare_navn varchar(45),
+Mængde double,
+IngListeID int references Opskrifter.opskriftID,
+versionsnummer int references Opskrifter.versionsnummer,
+CONSTRAINT FK1 FOREIGN KEY (IngListeID, versionsnummer) references Opskrifter (opskriftID, versionsnummer)
+ON DELETE CASCADE
+);
 
-    CREATE TABLE if not exists Ingrediensliste (
-    Råvare_navn varchar(45),
-    Mængde double,
-    IngListeID int primary key references Opskrifter.opskriftID
-    );
+CREATE TABLE if not exists Produktbatch (
+ProduktbatchID int primary key auto_increment,
+Produktnavn varchar(45) references Opskrifter.Batch_navn,
+Udløbsdato date,
+status varchar(45)
+);
+
+CREATE TABLE if not exists Råvare_batch_liste (
+Råvarebatch_liste_ID int references Produktbatch.ProduktbatchID,
+Producentnavn varchar(45),
+CONSTRAINT FK1 FOREIGN KEY (Råvarebatch_liste_ID) references Produktbatch (ProduktbatchID)
+ON DELETE CASCADE
+);
+
+CREATE TABLE if not exists Råvare_batch_lager (
+BatchID int,
+producentnavn varchar(45),
+Mængde double,
+Råvare_navn varchar(45),
+rest boolean,
+INDEX Mængde_index (Mængde),
+primary key (BatchID, producentnavn)
+);
+
+CREATE TABLE if not exists Genbestillingsliste (
+Råvare_navn varchar(45) primary key UNIQUE references Råvare_batch_lager.Råvare_navn,
+Genbestilles boolean
+);
+
+CREATE TABLE if not exists Produktbatch_beskrivelse (
+BatchType varchar(45) ,
+Opbevarings_dage int,
+opskriftID int UNIQUE primary key references Opskrifter.opskriftID
+);
+
+CREATE TABLE if not exists Bruger (
+BrugerID int primary key,
+brugerNavn varchar(45),
+Initialer varchar (45)
+);
+
+CREATE TABLE if not exists Roller (
+BrugerID int references bruger.BrugerID ON DELETE CASCADE,
+Rolle varchar(45),
+CONSTRAINT primary key pk1 (BrugerID, Rolle)
+);
 
 
-    CREATE TABLE if not exists Produktbatch (
-    ProduktbatchID int primary key auto_increment,
-    Produktnavn varchar(45) references Opskrifter.Batch_navn,
-    Udløbsdato date,
-    status varchar(45)
-    );
-
-    CREATE TABLE if not exists Råvare_batch_liste (
-    Råvarebatch_liste_ID int primary key references Produktbatch.ProduktbatchID,
-    Producentnavn varchar(45),
-    RåvarebatchID int
-    );
-
-
-    CREATE TABLE if not exists Råvare_batch_lager (
-    BatchID int primary key references Råvarebatch.batchID,
-    producentnavn varchar(45),
-    Mængde double,
-    Råvare_navn varchar(45),
-    rest boolean,
-    INDEX Mængde_index (Mængde)
-    );
-
-    CREATE TABLE if not exists Genbestillingsliste (
-    Råvare_navn varchar(45) primary key UNIQUE references Råvare_batch_lager.Råvare_navn,
-    Genbestilles boolean
-    );
-
-
-    CREATE TABLE if not exists Produktbatch_beskrivelse (
-    BatchType varchar(45) ,
-    Opbevarings_dage int,
-    opskriftID int UNIQUE primary key references Opskrifter.opskriftID
-    );
-
-    CREATE TABLE if not exists Bruger (
-    BrugerID int primary key,
-    brugerNavn varchar(45),
-    Initialer varchar (45)
-    );
-
-    CREATE TABLE if not exists Roller (
-    BrugerID int references bruger.BrugerID ON DELETE CASCADE,
-    Rolle varchar(45),
-    CONSTRAINT primary key pk1 (BrugerID, Rolle)
-    );

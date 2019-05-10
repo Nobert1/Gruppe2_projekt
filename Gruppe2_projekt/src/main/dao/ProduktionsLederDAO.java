@@ -247,6 +247,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         }
     }
 
+    //Der skal også slette i råvarebatch liste. On delete cascade måske?
     @Override
     public void DeleteProductBatch(int batchID) throws DALException {
         try (Connection c = DataSource.getConnection()) {
