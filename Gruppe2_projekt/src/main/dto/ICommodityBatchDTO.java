@@ -4,28 +4,35 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public interface ICommodityBatchDTO {
+
     int getBatchID();
+
     String getProducerName();
-    int getingredientlistID();
+
+    int getRecipeID();
 
     void setBatchID(int batchID);
 
     void setProducerName(String producerName);
 
-    void setIngredientListID(int inglisteID);
+    void setRecipeID(int recipeID);
 
-    public void setMængde(Double mængde);
+    void setActualAmount(Double amount);
 
-    public double getMængde();
+    Double getActualAmount();
 
-    public ICommodityBatchDTO makeCommodityBatchFromResultset(ResultSet resultSet) throws SQLException;
+    void setOriginalAmount (Double amount);
 
-    public String getCommodityName();
+    Double getOriginalAmount();
 
-    public void setCommodityName(String commodityName);
+    ICommodityBatchDTO makeCommodityBatchFromResultset(ResultSet resultSet) throws SQLException;
 
-    public boolean isRemainder();
+    String getCommodityName();
 
-    public void setRemainder(boolean remainder);
+    void setCommodityName(String commodityName);
+
+    boolean isRemainder();
+
+    void setRemainder(boolean remainder);
 
     }

@@ -1,13 +1,10 @@
 package dao;
 
 import dto.*;
-import dao.*;
-import Exception.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Scanner;
-import java.util.*;
 
 import java.sql.*;
 
@@ -36,18 +33,18 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
             for (ICommodityBatchDTO commodityBatchDTO : productBatchDTO.getCommodityBatchDTOList()) {
 
-                System.out.println("you need to withdraw " + commodityBatchDTO.getMængde() + " from batch number = " + commodityBatchDTO.getMængde());
+                System.out.println("you need to withdraw " + commodityBatchDTO.getAmount() + " from batch number = " + commodityBatchDTO.getAmount());
                 System.out.println("how much did you withdraw?");
                 int withdrawen = scan.nextInt();
 
-                while (withdrawen >= commodityBatchDTO.getMængde() * 0.98 && commodityBatchDTO.getMængde() * 1.02 >= withdrawen) {
+                while (withdrawen >= commodityBatchDTO.getAmount() * 0.98 && commodityBatchDTO.getAmount() * 1.02 >= withdrawen) {
                     System.out.println("withdrawn amount not within the boundaries, please withdraw agian");
                     System.out.println("How much did you withdraw?");
                     withdrawen = scan.nextInt();
                 }
 
                 statement1.setInt(1, commodityBatchDTO.getBatchID());
-                statement1.setDouble(2, commodityBatchDTO.getMængde() - withdrawen);
+                statement1.setDouble(2, commodityBatchDTO.getAmount() - withdrawen);
                 statement1.addBatch();
             }
 

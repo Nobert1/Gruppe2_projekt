@@ -4,8 +4,10 @@ public interface IIngredientListDTO {
 
     public double getAmount();
 
-    public int getIngredientlistID();
+    public int getIngredientListID();
 
-    public String getCommodity_name();
+    public String getCommodityName();
+
+    public int GetVersionNo();
 
 }

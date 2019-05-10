@@ -3,15 +3,14 @@ package dto;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
 public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
 
     private int batchID;
     private String producername;
-    private int InglisteID;
-    private Double Mængde;
+    private int recipeID;
+    private Double originalAmount;
+    private Double actualAmount;
     private String CommodityName;
     private boolean remainder;
 
@@ -35,12 +34,10 @@ public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
         return CommodityName;
     }
 
-
     @Override
     public void setCommodityName(String commodityName) {
         CommodityName = commodityName;
     }
-
 
     @Override
     public String getProducerName() {
@@ -48,8 +45,8 @@ public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
     }
 
     @Override
-    public int getingredientlistID() {
-        return this.InglisteID;
+    public int getRecipeID() {
+        return this.recipeID;
     }
 
     @Override
@@ -63,28 +60,32 @@ public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
     }
 
     @Override
-    public void setIngredientListID(int inglisteID) {
-        this.InglisteID = inglisteID;
+    public void setRecipeID(int recipeID) {
+        this.recipeID = recipeID;
     }
 
     @Override
-    public void setMængde(Double mængde) {
-        Mængde = mængde;
-    }
+    public Double getOriginalAmount() {        return originalAmount;    }
 
+    @Override
+    public void setOriginalAmount(Double originalAmount) {        this.originalAmount = originalAmount;    }
 
-    public double getMængde() {
-        return Mængde;
+    @Override
+    public Double getActualAmount() {        return actualAmount;    }
+
+    @Override
+    public void setActualAmount(Double actualAmount) {
+        this.actualAmount = actualAmount;
     }
 
     public ICommodityBatchDTO makeCommodityBatchFromResultset(ResultSet resultSet) throws SQLException {
         ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
 
-
         commodityBatchDTO.setBatchID(resultSet.getInt("BatchID"));
         commodityBatchDTO.setProducerName(resultSet.getString("Producentnavn"));
-        commodityBatchDTO.setIngredientListID(resultSet.getInt("IngListeID"));
-        commodityBatchDTO.setMængde(resultSet.getDouble("Mængde"));
+        commodityBatchDTO.setCommodityName(resultSet.getString("Råvarenavn"));
+        commodityBatchDTO.setActualAmount(resultSet.getDouble("Indkøbt_mængde"));
+        commodityBatchDTO.setOriginalAmount(resultSet.getDouble("Rest_mængde"));
 
         return commodityBatchDTO;
     }

@@ -11,6 +11,7 @@ import dto.*;
 /**
  * Class more or less copypasted from s185031 2nd assignment, contains a few changes.
  */
+
 public class UserDAO implements IUserDAO {
 
     @Override

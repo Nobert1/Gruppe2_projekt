@@ -1,12 +1,9 @@
 package dao;
 
 import dto.*;
-import dao.*;
-import Exception.*;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Scanner;
 
 public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
@@ -41,7 +38,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
                 statement2.setInt(4, recipeDTO.getVersionnumber());
 
             for (IIngredientListDTO ingredient : recipeDTO.getIngredientListDTOList()) {
-                statement2.setString(1, ingredient.getCommodity_name());
+                statement2.setString(1, ingredient.getCommodityName());
                 statement2.setDouble(2, ingredient.getAmount());
                 statement2.addBatch();
 
@@ -92,7 +89,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
 
             for (IIngredientListDTO ingredient : recipeDTO.getIngredientListDTOList()) {
 
-                statement1.setString(1, ingredient.getCommodity_name());
+                statement1.setString(1, ingredient.getCommodityName());
                 statement1.setDouble(2, ingredient.getAmount());
                 statement1.addBatch();
             }
