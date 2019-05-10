@@ -4,9 +4,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
 import Exception.DALException;
 import dto.IUserDTO;
 import dto.*;
+
+import javax.management.relation.Role;
 
 /**
  * Class more or less copypasted from s185031 2nd assignment, contains a few changes.

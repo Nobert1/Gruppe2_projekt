@@ -2,6 +2,7 @@ package dao;
 
 import dto.*;
 
+import javax.management.relation.Role;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Scanner;
@@ -16,7 +17,6 @@ import java.sql.*;
  */
 
 public class LaborantDAO extends UserDAO implements ILaborantDAO {
-
 
     @Override
     public void prepareProductBatch(IProductBatchDTO productBatchDTO) {
