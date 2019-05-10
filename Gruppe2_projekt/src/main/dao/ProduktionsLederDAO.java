@@ -188,7 +188,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, ?, null, ?)");
             statement2.setInt(1, productBatchDTO.getBatchID());
-            statement2.setString(2, productBatchDTO.getProduktnavn());
+            statement2.setString(2, productBatchDTO.getProductName());
             //Den sidste værdi sættes til null da det er udløbsdato. Udløbsdato er først fastlagt når produktet er klar.
             statement2.setString(3, "Awaiting production");
 
@@ -294,7 +294,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
              * Skal vi i virkeligheden have den tabel til gamle opskrifter? - Gustav
              * */
 
-            statement.setString(1, productBatchDTO.getProduktnavn());
+            statement.setString(1, productBatchDTO.getProductName());
             ResultSet resultset = statement.executeQuery();
 
             //Statement virker på workbench, test om det også virker her

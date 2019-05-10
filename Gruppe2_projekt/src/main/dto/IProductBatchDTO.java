@@ -8,23 +8,26 @@ import java.util.List;
 public interface IProductBatchDTO {
 
 
-    public java.sql.Date getExpiringdate();
+    java.sql.Date getExpirationDate();
 
-    public int getBatchID();
+    int getProductBatchID();
 
-    public String getProduktnavn();
-    public List<ICommodityBatchDTO> getCommodityBatchDTOList();
-    public void setCommodityBatchDTOList(List<ICommodityBatchDTO> commodityBatchDTOList);
-    public String getStatus();
+    String getProductName();
 
-    public void setProduktnavn(String Produktnavn);
+    List<ICommodityBatchDTO> getCommodityBatchDTOList();
 
-    public void setBatchID(int batchID);
+    String getStatus();
 
-    public void setExpiringdate(Date expiringdate);
+    void setCommodityBatchDTOList(List<ICommodityBatchDTO> commodityBatchDTOList);
 
-    public void setStatus(String status);
+    void setProductName(String productname);
 
-    public IProductBatchDTO makeproductBatchFromResultset(ResultSet resultSet) throws SQLException;
+    void setProductBatchID(int batchID);
+
+    void setExpirationDate(Date expirationDate);
+
+    void setStatus(String status);
+
+    IProductBatchDTO makeproductBatchFromResultset(ResultSet resultSet) throws SQLException;
 
     }

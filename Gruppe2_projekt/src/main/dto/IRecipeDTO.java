@@ -1,25 +1,30 @@
 package dto;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 public interface IRecipeDTO {
 
-    public Date getChangeDate();
-    public String getStatus();
-    public int getRecipeID();
-    public int getVersionnumber();
-    public String getProductName();
-    public double getVolume();
-    public void setStatus(String status);
-    public void setChangeDate(Date changeDate);
-    public void setProductName(String productName);
-    public void setVolume(double volume);
-    public void setRecipeID(int recipeID);
+    Date getChangeDate();
+    String getStatus();
+    int getRecipeID();
+    int getVersionnumber();
+    String getProductName();
+    double getVolume();
 
-    public List<IIngredientListDTO> getIngredientListDTOList();
-    public void setIngredientListDTOList(List<IIngredientListDTO> ingredientListDTOList);
+    void setStatus(String status);
+    void setChangeDate(Date changeDate);
+    void setProductName(String productName);
+    void setVolume(Double volume);
+    void setRecipeID(int recipeID);
+    void setVersionnumber(int versionnumber);
 
+    List<IIngredientListDTO> getIngredientListDTOList();
+    void setIngredientListDTOList(List<IIngredientListDTO> ingredientListDTOList);
+    //TODO: Liste skal implementeres i klassen.
 
-    public void setVersionnumber(int versionnumber);
+    IRecipeDTO makeRecipeFromResultset(ResultSet resultSet) throws SQLException;
+
 }

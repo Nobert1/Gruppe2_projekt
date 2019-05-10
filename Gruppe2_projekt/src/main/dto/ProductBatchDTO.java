@@ -8,62 +8,71 @@ import java.util.List;
 
 public class ProductBatchDTO implements Serializable, IProductBatchDTO {
 
-    int batchID;
-    String Produktnavn;
-    java.sql.Date expiringdate;
-    String status;
-    List<ICommodityBatchDTO> commodityBatchDTOList;
+    private int batchID;
+    private String productName;
+    private java.sql.Date expirationDate;
+    private String status;
+    private List<ICommodityBatchDTO> commodityBatchDTOList;
 
+    @Override
     public List<ICommodityBatchDTO> getCommodityBatchDTOList() {
         return commodityBatchDTOList;
     }
 
+    @Override
     public void setCommodityBatchDTOList(List<ICommodityBatchDTO> commodityBatchDTOList) {
-        this.commodityBatchDTOList = commodityBatchDTOList;
-    }
+        this.commodityBatchDTOList = commodityBatchDTOList;    }
 
-    public int getBatchID() {
+    @Override
+    public int getProductBatchID() {
         return batchID;
     }
 
-    public String getProduktnavn() {
-        return Produktnavn;
+    @Override
+    public String getProductName() {
+        return productName;
     }
 
+    @Override
     public String getStatus() {
         return status;
     }
 
     @Override
-    public Date getExpiringdate() {
-        return expiringdate;
+    public Date getExpirationDate() {
+        return expirationDate;
     }
 
     @Override
-    public void setExpiringdate(java.util.Date expiringdate) {
-
+    public void setExpirationDate(java.util.Date expirationDate) {
+        //TODO: Implementer expiration date i forhold til SQL format.
     }
 
-    public void setProduktnavn(String Produktnavn) {
-        this.Produktnavn = Produktnavn;
+    @Override
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public void setBatchID(int batchID) {
+    @Override
+    public void setProductBatchID(int batchID) {
         this.batchID = batchID;
     }
 
-
+    @Override
     public void setStatus(String status) {
         this.status = status;
     }
 
+    @Override
     public IProductBatchDTO makeproductBatchFromResultset(ResultSet resultSet) throws SQLException {
 
     IProductBatchDTO productBatchDTO = new ProductBatchDTO();
-            productBatchDTO.setBatchID(resultSet.getInt("BatchID"));
-            productBatchDTO.setProduktnavn(resultSet.getString("Batch_navn"));
-            productBatchDTO.setExpiringdate(resultSet.getDate("Udløbsdato"));
+            productBatchDTO.setProductBatchID(resultSet.getInt("BatchID"));
+            productBatchDTO.setProductName(resultSet.getString("Batch_navn"));
+            productBatchDTO.setExpirationDate(resultSet.getDate("Udløbsdato"));
             productBatchDTO.setStatus(resultSet.getString("status"));
+
+            //TODO: Implementer setfunktion af CommodityBatchListe.
 
         return productBatchDTO;
     }

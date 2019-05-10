@@ -1,13 +1,22 @@
 package dto;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public interface IIngredientListDTO {
 
-    public double getAmount();
+    double getAmount();
 
-    public int getIngredientListID();
+    void setAmount(Double amount);
 
-    public String getCommodityName();
+    int getIngredientListID();
 
-    public int GetVersionNo();
+    void setIngredientListID(int ID);
+
+    String getCommodityName();
+
+    void setCommodityName(String name);
+
+    IIngredientListDTO makeIngredientListFromResultset(ResultSet resultSet) throws SQLException;
 
 }

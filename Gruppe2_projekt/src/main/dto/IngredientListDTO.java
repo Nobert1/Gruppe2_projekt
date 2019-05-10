@@ -9,13 +9,13 @@ public class IngredientListDTO implements Serializable, IIngredientListDTO {
     private String CommodityName;
     private double amount;
     private int IngredientListID;
-    private int versionNo;
 
     @Override
     public String getCommodityName() {
         return CommodityName;
     }
 
+    @Override
     public void setCommodityName(String commodityName) {
         CommodityName = commodityName;
     }
@@ -25,35 +25,28 @@ public class IngredientListDTO implements Serializable, IIngredientListDTO {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    @Override
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
     @Override
-    public int getIngredientlistID() {
+    public int getIngredientListID() {
         return IngredientListID;
     }
 
-    public void setIngredientlistID(int ingredientlistID) {
+    @Override
+    public void setIngredientListID(int ingredientlistID) {
         this.IngredientListID = ingredientlistID;
-    }
-
-    public int getVersionNo() {
-        return versionNo;
-    }
-
-    public void setVersionNo(int versionNo) {
-        this.versionNo = versionNo;
     }
 
     public IIngredientListDTO makeIngredientListFromResultset(ResultSet resultSet) throws SQLException {
 
         IIngredientListDTO IngredientListDTO = new IngredientListDTO();
 
-        IIngredientListDTO.setCommodityName(resultSet.getString("Råvarenavn"));
-        IIngredientListDTO.setAmount(resultSet.getDouble("Mængde"));
-        IIngredientListDTO.setIngredientListID(resultSet.getInt("Ingrediensliste ID"));
-        IIngredientListDTO.setVersionNo(resultSet.getInt("Versionsnummer"));
+        IngredientListDTO.setCommodityName(resultSet.getString("Råvarenavn"));
+        IngredientListDTO.setAmount(resultSet.getDouble("Mængde"));
+        IngredientListDTO.setIngredientListID(resultSet.getInt("Ingrediensliste ID"));
 
         return IngredientListDTO;
     }

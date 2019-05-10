@@ -79,6 +79,7 @@ public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
     }
 
     public ICommodityBatchDTO makeCommodityBatchFromResultset(ResultSet resultSet) throws SQLException {
+
         ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
 
         commodityBatchDTO.setBatchID(resultSet.getInt("BatchID"));
@@ -86,6 +87,7 @@ public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
         commodityBatchDTO.setCommodityName(resultSet.getString("Råvarenavn"));
         commodityBatchDTO.setActualAmount(resultSet.getDouble("Indkøbt_mængde"));
         commodityBatchDTO.setOriginalAmount(resultSet.getDouble("Rest_mængde"));
+        commodityBatchDTO.setRemainder(resultSet.getBoolean("Er_rest"));
 
         return commodityBatchDTO;
     }

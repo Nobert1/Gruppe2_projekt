@@ -12,14 +12,13 @@ import dto.*;
  * Class more or less copypasted from s185031 2nd assignment, contains a few changes.
  */
 
-public class UserDAO implements IUserDAO {
+    public class UserDAO implements IUserDAO {
 
     @Override
     public IUserDTO getUser(int userId) throws DALException {
 
         String SQL = "SELECT * FROM Brugere JOIN roles ON users.userId = roles.userId WHERE (?) = (?)";
         //TODO Implement this - should retrieve a user from db and parse it to a UserDTO
-
 
         try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
@@ -33,18 +32,16 @@ public class UserDAO implements IUserDAO {
             if (resultset.next()){
                 user = makeUserFromResultset(resultset);
             }
-            //TODO: Make a user from the resultset
+            //TODO: Make a user from the resultset (is done?)
             c.commit();
             return user;
         } catch (SQLException e) {
             throw new DALException(e.getMessage());
         }
-
     }
 
     @Override
     public List<IUserDTO> getUserList() throws DALException {
-
 
         // Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
 
@@ -68,6 +65,7 @@ public class UserDAO implements IUserDAO {
         user.setUserId(resultSet.getInt("userId"));
         user.setUserName(resultSet.getString("userName"));
         user.setIni(resultSet.getString("ini"));
+
         //Extract roles as String
         String roleString = resultSet.getString("roles");
         //Split string by ;
@@ -78,5 +76,3 @@ public class UserDAO implements IUserDAO {
         return user;
     }
 }
-
-

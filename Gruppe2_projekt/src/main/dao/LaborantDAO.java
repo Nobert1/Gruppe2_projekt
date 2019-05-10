@@ -69,7 +69,7 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
 
             PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Produktbatch_beskrivelse WHERE BatchType = (?)");
-            statement1.setString(1, productBatchDTO.getProduktnavn());
+            statement1.setString(1, productBatchDTO.getProductName());
             ResultSet resultset1 = statement1.executeQuery();
 
 
