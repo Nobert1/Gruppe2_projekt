@@ -16,7 +16,7 @@ public class UserDAO implements IUserDAO {
     @Override
     public IUserDTO getUser(int userId) throws DALException {
 
-        String SQL = "SELECT * FROM Brugere JOIN roles ON users.userId = roles.userId WHERE (?) = (?)";
+        String SQL = "SELECT * FROM Brugere JOIN Roller ON Brugere.BrugerID = Roller.BrugerID WHERE (?) = (?)";
         //TODO Implement this - should retrieve a user from db and parse it to a UserDTO
 
 
@@ -50,7 +50,7 @@ public class UserDAO implements IUserDAO {
         try (Connection c = DataSource.getConnection()) {
 
             Statement statement = c.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM users JOIN roles ON users.userId = roles.userId");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Brugere JOIN Roller ON Brugere.BrugerID = Roller.BrugerID");
             List<IUserDTO> userList = new ArrayList<>();
             while (resultSet.next()){
                 IUserDTO user = makeUserFromResultset(resultSet);
