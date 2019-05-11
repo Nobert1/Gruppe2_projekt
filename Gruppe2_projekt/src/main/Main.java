@@ -16,7 +16,7 @@ public class Main {
 
         validateUser(brugerID);
 
-        System.out.println("Ønsker du at agere som admin tryk 1, lab tryk 2, farma tryk 3 og leder tryk 4");
+        //System.out.println("Ønsker du at agere som admin tryk 1, lab tryk 2, farma tryk 3 og leder tryk 4");
 
         //TODO: Tjek at brugeren har rettigheder til at agere således
 
@@ -33,9 +33,10 @@ public class Main {
         try (Connection c = DataSource.getConnection()) {
 
             Statement statement = c.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT brugerID FROM users WHERE brugerID = " + brugerID);
+            ResultSet resultSet = statement.executeQuery("SELECT BrugerID FROM Bruger WHERE BrugerID = " + brugerID);
             if (resultSet.toString() == brugerID) {
                 validated = true;
+                System.out.println("Brugeren er valideret.");
             }
             return validated;
 
@@ -43,6 +44,5 @@ public class Main {
             throw new DALException(e.getMessage());
         }
     }
-
 
 }
