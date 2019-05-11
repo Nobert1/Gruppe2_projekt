@@ -68,4 +68,32 @@ Rolle varchar(45),
 CONSTRAINT primary key pk1 (BrugerID, Rolle)
 );
 
+CREATE TABLE if not exists Administrators (
+BrugerID int primary key,
+kodeord varchar(45)
+);
+CREATE TABLE if not exists Pharmaceuts (
+BrugerID int primary key,
+kodeord varchar(45)
+);
+CREATE TABLE if not exists Laborants (
+BrugerID int primary key,
+kodeord varchar(45)
+);
+CREATE TABLE if not exists Produktionsledere (
+BrugerID int primary key,
+kodeord varchar(45)
+);
+
+Insert into Administrators (BrugerID, kodeord)
+values (180557, 'mitkodeord');
+
+Insert into Pharmaceuts (BrugerID, kodeord)
+values (180556, 'mitkodeord');
+
+Insert into Laborants (BrugerID, kodeord)
+values (180555, 'mitkodeord');
+
+Insert into Produktionsledere (BrugerID, kodeord)
+values (180554, 'mitkodeord');
 
