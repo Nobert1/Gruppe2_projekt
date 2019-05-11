@@ -18,9 +18,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
         try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
 
-
             PreparedStatement statement = c.prepareStatement("INSERT INTO Opskrifter ((?),(?), (?), (?), (?))");
-
 
             statement.setInt(1, recipeDTO.getRecipeID());
             statement.setString(2, recipeDTO.getProductName());
@@ -29,10 +27,10 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             statement.setInt(4, recipeDTO.getVersionnumber());
             statement.setString(5, recipeDTO.getStatus());
 
-            //TODO Skal vi lade objektet have det her eller nah?
+            //TODO: Skal vi lade objektet have det her eller nah?
 
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Ingrediensliste ((?),(?),(?), (?))");
-            //Da værdien ikke er indsat endnu, skal der lige et + 1 på :)æ
+            //TODO: Da værdien ikke er indsat endnu, skal der lige et + 1 på :)æ
 
                 statement2.setInt(3, recipeDTO.getRecipeID());
                 statement2.setInt(4, recipeDTO.getVersionnumber());
@@ -62,10 +60,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
 
 
         //TODO - ved indsætning af opskrifter burde vi ikke lade recipeDTO holde versionsnummer det burde være en form for auto increment.
-        //Det ville være fint hvis det var en værdi der auto inc baseret på en værdi en anden kolonne (ID).
-
-
-
+        //TODO Det ville være fint hvis det var en værdi der auto inc baseret på en værdi en anden kolonne (ID).
 
         /**
          * Ændringer i enhvert system der vil indgå i medicinal branhcen vil blive logget, så man skal ikke kunne direkte

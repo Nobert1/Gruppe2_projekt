@@ -9,8 +9,6 @@ import java.util.List;
 
 public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO {
 
-
-
     //TODO burde product batches status værdi laves som en enum så den ikke kan få stavefejl, og alt muligt andet?
 
     /**
@@ -27,7 +25,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
             statement.setInt(1, commodityBatchDTO.getBatchID());
             statement.setString(2, commodityBatchDTO.getProducerName());
-            statement.setDouble(3, commodityBatchDTO.getAmount());
+            statement.setDouble(3, commodityBatchDTO.getActualAmount());
             statement.setString(4, commodityBatchDTO.getCommodityName());
             statement.setBoolean(5, commodityBatchDTO.isRemainder());
 
@@ -81,7 +79,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
             PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager SET Mængde = (?), Råvare_navn = (?), rest = (?) WHERE BatchID = (?) AND Producentnavn = (?)");
 
-            statement1.setDouble(1, commodityBatchDTO.getAmount());
+            statement1.setDouble(1, commodityBatchDTO.getActualAmount());
             statement1.setString(2, commodityBatchDTO.getCommodityName());
             statement1.setBoolean(3, commodityBatchDTO.isRemainder());
             statement1.setInt(4, commodityBatchDTO.getBatchID());
@@ -127,7 +125,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     @Override
     public List<ICommodityBatchDTO> getCommodityBatchList() throws DALException {
 
-        // Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
+        //TODO: Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
         try (Connection c = DataSource.getConnection()) {
             List<ICommodityBatchDTO> commodityBatchDTOList = new ArrayList<>();
             Statement statement = c.createStatement();
@@ -144,36 +142,13 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         }
     }
 
-
-
-
     /**
      * Product batch methods. - Gustav Emil Nobert
      * @param productBatchDTO
      * @return
      *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
      * PRODUCT BATCHES STARTS NOW
      */
-
-
 
     //TODO mangler den her ikke en metode eller to? F.eks noget med nogle opskrifter getRecipe etc.
 
@@ -187,7 +162,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             //Det her skal vel være en join af en art...... skal vidst også oprette det objekt der bliver sat ind.
 
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, ?, null, ?)");
-            statement2.setInt(1, productBatchDTO.getBatchID());
+            statement2.setInt(1, productBatchDTO.getProductBatchID());
             statement2.setString(2, productBatchDTO.getProductName());
             //Den sidste værdi sættes til null da det er udløbsdato. Udløbsdato er først fastlagt når produktet er klar.
             statement2.setString(3, "Awaiting production");
@@ -202,7 +177,6 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
         return CommoditybatchList;
     }
-
 
     @Override
     public ICommodityBatchDTO getProductBatch(int BatchID) throws DALException {
@@ -230,8 +204,8 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             PreparedStatement statement1 = c.prepareStatement("UPDATE Produktbatch WHERE ID = (?) SET Producentnavn = (?), IngListeID = (?), Mængde = (?)");
             statement1.setInt(1, commodityBatchDTO.getBatchID());
             statement1.setString(2, commodityBatchDTO.getProducerName());
-            statement1.setInt(3, commodityBatchDTO.getIngredientlistID());
-            statement1.setDouble(4, commodityBatchDTO.getAmount());
+            statement1.setInt(3, commodityBatchDTO.getRecipeID()); //TODO: Dette skal være ingrediensliste ID
+            statement1.setDouble(4, commodityBatchDTO.getActualAmount()); //TODO Actual amout eller orig amount?
 
             int row = statement1.executeUpdate();
             c.commit();
@@ -241,7 +215,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         }
     }
 
-    //Der skal også slette i råvarebatch liste. On delete cascade måske?
+    //TODO: Der skal også slette i råvarebatch liste. On delete cascade måske?
     @Override
     public void DeleteProductBatch(int batchID) throws DALException {
         try (Connection c = DataSource.getConnection()) {
@@ -258,9 +232,14 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     }
 
     @Override
+    public void readallProductBatches() {
+
+    }
+
+    @Override
     public List<IProductBatchDTO> getProductBatchList() throws DALException {
 
-        // Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
+        //TODO: Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
 
         try (Connection c = DataSource.getConnection()) {
 
@@ -301,7 +280,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Råvare_batch_lager WHERE Råvare_navn = (?) HAVING MIN(Mængde) > (?)");
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Råvare_batch_liste VALUES (?, ?, ?)");
 
-            statement2.setInt(1, productBatchDTO.getBatchID());
+            statement2.setInt(1, productBatchDTO.getProductBatchID());
 
 
             while (resultset.next()) {
@@ -310,7 +289,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
                 ResultSet resultSet1 = statement1.executeQuery();
                 ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
                 commodityBatchDTO.setBatchID(resultSet1.getInt("BatchID"));
-                commodityBatchDTO.setAmount(resultSet1.getDouble("Mængde"));
+                commodityBatchDTO.setActualAmount(resultSet1.getDouble("Mængde"));
                 CommoditybatchList.add(commodityBatchDTO);
 
                 //De indsættes i den liste der bruges til at holde styr på det.
@@ -326,4 +305,5 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         }
         return CommoditybatchList;
     }
+
 }
