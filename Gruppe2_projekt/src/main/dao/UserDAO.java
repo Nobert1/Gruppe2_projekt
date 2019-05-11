@@ -35,6 +35,7 @@ public class UserDAO implements IUserDAO {
             //TODO: Make a user from the resultset
             c.commit();
             return user;
+
         } catch (SQLException e) {
             throw new DALException(e.getMessage());
         }
