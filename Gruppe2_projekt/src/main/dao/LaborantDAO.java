@@ -1,13 +1,11 @@
 package dao;
 
 import dto.*;
-import dao.*;
-import Exception.*;
+import exception.DALException;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Scanner;
-import java.util.*;
 
 import java.sql.*;
 
@@ -22,14 +20,14 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
 
     @Override
-    public void prepareProductBatch(IProductBatchDTO productBatchDTO) {
+    public void prepareProductBatch(IProductBatchDTO productBatchDTO) throws DALException{
         try (Connection c = DataSource.getConnection()) {
 
             Scanner scan = new Scanner(System.in);
             c.setAutoCommit(false);
 
 
-            PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager WHERE ID = (?) SET Mængde (?)");
+            PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager WHERE ID = (?) AND producentnavn = (?) SET Mængde (?)");
 
 //Her ville det måske være fedt at lave noget andet end input scan. Men vi skal jo netop bruge noget input så der vel ingen anden måde at gøre det på.
 
@@ -47,7 +45,8 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
                 }
 
                 statement1.setInt(1, commodityBatchDTO.getBatchID());
-                statement1.setDouble(2, commodityBatchDTO.getMængde() - withdrawen);
+                statement1.setString(2, commodityBatchDTO.getProducerName());
+                statement1.setDouble(3, commodityBatchDTO.getMængde() - withdrawen);
                 statement1.addBatch();
             }
 
@@ -58,12 +57,12 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             int[] rows = statement1.executeBatch();
             c.commit();
         } catch (SQLException e) {
-            e.getMessage();
+            throw new DALException(e.getMessage());
         }
     }
 
     @Override
-    public void finishBatch(IProductBatchDTO productBatchDTO) {
+    public void finishBatch(IProductBatchDTO productBatchDTO) throws DALException {
 
         try (Connection c = DataSource.getConnection()) {
 
@@ -89,7 +88,7 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             c.commit();
 
         } catch (SQLException e) {
-            e.getMessage();
+            throw new DALException(e.getMessage());
         }
     }
 

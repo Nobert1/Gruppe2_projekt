@@ -1,9 +1,8 @@
 package dao;
 
-import dao.*;
 import java.util.List;
 import dto.*;
-import Exception.*;
+import exception.*;
 
 public interface IUserDAO {
     IUserDTO getUser(int userId) throws DALException;

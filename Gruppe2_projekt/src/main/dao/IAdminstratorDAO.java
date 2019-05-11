@@ -1,7 +1,7 @@
 package dao;
 
 import dto.*;
-import Exception.*;
+import exception.*;
 
 public interface IAdminstratorDAO extends IUserDAO  {
     //Create

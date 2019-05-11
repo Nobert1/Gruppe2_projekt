@@ -1,17 +1,11 @@
 package dao;
 
-import com.sun.jndi.ldap.pool.PooledConnectionFactory;
 import dto.*;
-import dao.*;
-import Exception.*;
+import exception.*;
 
-import javax.sql.*;
-import javax.transaction.xa.XAResource;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO {
 
@@ -303,7 +297,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             statement.setString(1, productBatchDTO.getProduktnavn());
             ResultSet resultset = statement.executeQuery();
 
-            //Statement virker på workbench, test om det også virker her
+            //Statement virker på workbench, userTest om det også virker her
             PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Råvare_batch_lager WHERE Råvare_navn = (?) HAVING MIN(Mængde) > (?)");
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Råvare_batch_liste VALUES (?, ?, ?)");
 

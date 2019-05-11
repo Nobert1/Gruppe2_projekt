@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import Exception.DALException;
+import exception.DALException;
 import dto.IUserDTO;
 import dto.*;
 
@@ -16,7 +16,7 @@ public class UserDAO implements IUserDAO {
     @Override
     public IUserDTO getUser(int userId) throws DALException {
 
-        String SQL = "SELECT * FROM Brugere JOIN roles ON users.userId = roles.userId WHERE (?) = (?)";
+        String SQL = "SELECT * FROM Brugere JOIN Roller ON Brugere.BrugerID = Roller.BrugerID WHERE (?) = (?)";
         //TODO Implement this - should retrieve a user from db and parse it to a UserDTO
 
 
@@ -50,7 +50,7 @@ public class UserDAO implements IUserDAO {
         try (Connection c = DataSource.getConnection()) {
 
             Statement statement = c.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM users JOIN roles ON users.userId = roles.userId");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Brugere JOIN Roller ON Brugere.BrugerID = Roller.BrugerID");
             List<IUserDTO> userList = new ArrayList<>();
             while (resultSet.next()){
                 IUserDTO user = makeUserFromResultset(resultSet);
@@ -64,11 +64,11 @@ public class UserDAO implements IUserDAO {
 
     private IUserDTO makeUserFromResultset(ResultSet resultSet) throws SQLException {
         IUserDTO user = new userDTO();
-        user.setUserId(resultSet.getInt("userId"));
-        user.setUserName(resultSet.getString("userName"));
-        user.setIni(resultSet.getString("ini"));
+        user.setUserId(resultSet.getInt("BrugerID"));
+        user.setUserName(resultSet.getString("brugerNavn"));
+        user.setIni(resultSet.getString("Initialer"));
         //Extract roles as String
-        String roleString = resultSet.getString("roles");
+        String roleString = resultSet.getString("Rolle");
         //Split string by ;
         String[] roleArray = roleString.split(";");
         //Convert to List

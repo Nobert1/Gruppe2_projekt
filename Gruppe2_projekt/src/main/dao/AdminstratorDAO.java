@@ -1,10 +1,9 @@
 package dao;
 
 import dto.IUserDTO;
-import Exception.*;
+import exception.*;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -18,15 +17,16 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
     public void createUser(IUserDTO user) throws DALException {
         try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
-            PreparedStatement usersstatement = c.prepareStatement("INSERT INTO users VALUES (?, ?, ?)");
+            PreparedStatement usersstatement = c.prepareStatement("INSERT INTO Brugere VALUES (?, ?, ?)");
             String roleString = String.join(";", user.getRoles());
             usersstatement.setInt(1, user.getUserId());
-            usersstatement.setString(2, user.getIni());
-            usersstatement.setString(3, user.getUserName());
+            usersstatement.setString(2, user.getUserName());
+            usersstatement.setString(3, user.getIni());
+
 
             String[] roleArray = roleString.split(";");
             List<String> roleList = Arrays.asList(roleArray);
-            PreparedStatement rolesstatement = c.prepareStatement("INSERT INTO roles VALUES (?, ?)");
+            PreparedStatement rolesstatement = c.prepareStatement("INSERT INTO Roller VALUES (?, ?)");
 
             for (int i = 0; i < roleList.size(); i++) {
                 rolesstatement.setInt(1, user.getUserId());
@@ -50,14 +50,14 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
 
             c.setAutoCommit(false);
 
-            PreparedStatement statement = c.prepareStatement("UPDATE users SET userName=(?), ini=(?)");
+            PreparedStatement statement = c.prepareStatement("UPDATE Brugere SET brugerNavn=(?), Initialer=(?)");
 
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getIni());
             List<String> roleStrings = user.getRoles();
 
 
-            PreparedStatement statement2 = c.prepareStatement("UPDATE roles SET roles = (?), userID = (?)" );
+            PreparedStatement statement2 = c.prepareStatement("UPDATE Roller SET Rolle = (?), BrugerID = (?)" );
             statement2.setInt(2, user.getUserId());
             for (int i = 0; i < roleStrings.size(); i++) {
                 statement2.setString(1, roleStrings.get(i));
@@ -77,7 +77,7 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
     public void deleteUser(int userId) throws DALException {
         try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
-            PreparedStatement statement = c.prepareStatement("DELETE FROM users WHERE userId = ?");
+            PreparedStatement statement = c.prepareStatement("DELETE FROM Brugere WHERE BrugerID = ?");
             statement.setInt(1, userId);
             int rows = statement.executeUpdate();
             c.commit();

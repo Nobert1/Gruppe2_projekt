@@ -1,7 +1,6 @@
 package dao;
 import dto.*;
-import dao.*;
-import Exception.*;
+import exception.*;
 
 import java.util.List;
 
@@ -13,17 +12,17 @@ public interface IProduktionsLederDAO extends IUserDAO {
      * @throws DALException
      */
     public void createCommodityBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException;
-    public ICommodityBatchDTO getCommodity(int BatchID) throws DALException;
+    public ICommodityBatchDTO getCommodity(int BatchID, String producername) throws DALException;
     public void UpdateCommodityBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException;
-    public void DeleteCommodityBatch(int batchID) throws DALException;
+    public void DeleteCommodityBatch(int batchID, String producername) throws DALException;
     public List<ICommodityBatchDTO> getCommodityBatchList() throws DALException;
-    public List<ICommodityBatchDTO> getCommodityBatches(IProductBatchDTO productBatchDTO);
 
 
         /**
          * Ikke CRUD, stadig commodity
+         *
          */
-    public void getCommodityBatches();
+        public List<ICommodityBatchDTO> getCommodityBatches(IProductBatchDTO productBatchDTO);
     public int SumCommodityBatches(String commodityname) throws DALException;
 
     /**
@@ -33,7 +32,6 @@ public interface IProduktionsLederDAO extends IUserDAO {
     public ICommodityBatchDTO getProductBatch(int BatchID) throws DALException;
     public void updateProductBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException;
     public void DeleteProductBatch(int batchID) throws DALException;
-    public void readallProductBatches();
     public List<IProductBatchDTO> getProductBatchList() throws DALException;
 
 

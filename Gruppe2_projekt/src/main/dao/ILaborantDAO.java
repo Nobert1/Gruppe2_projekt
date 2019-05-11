@@ -1,14 +1,10 @@
 package dao;
 
 import dto.*;
-import dao.*;
-import Exception.*;
-
-import java.util.List;
+import exception.DALException;
 
 public interface ILaborantDAO extends IUserDAO {
 
-    void prepareProductBatch(IProductBatchDTO productBatchDTO);
-
-    void finishBatch(IProductBatchDTO productBatchDTO);
+    public void prepareProductBatch(IProductBatchDTO productBatchDTO) throws DALException;
+    public void finishBatch(IProductBatchDTO productBatchDTO) throws DALException;
 }
