@@ -5,6 +5,7 @@ import exception.DALException;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
@@ -14,7 +15,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
     //TODO primary key for opskrifterne skal være unikke og er derfor ID, versionsnummer. Det ville være fedt hvis versionsnummer kunne auto increment baseret på ID.
 
     @Override
-    public void createRecipe(IRecipeDTO recipeDTO) throws DALException{
+    public void createRecipe(IRecipeDTO recipeDTO) {
 
         try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
@@ -52,14 +53,14 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             c.commit();
 
             } catch(SQLException e){
-            throw new DALException(e.getMessage());
+                e.getMessage();
             }
 
 
         }
 
     @Override
-    public void editRecipe(IRecipeDTO recipeDTO) throws DALException {
+    public void editRecipe(IRecipeDTO recipeDTO) {
 
 
         //TODO - ved indsætning af opskrifter burde vi ikke lade recipeDTO holde versionsnummer det burde være en form for auto increment.
@@ -109,12 +110,12 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             c.commit();
 
         } catch(SQLException e){
-            throw new DALException(e.getMessage());
+            e.getMessage();
         }
     }
 
     @Override
-    public void deleteRecipe(int recipeID, int versionNumber) throws DALException{
+    public void deleteRecipe(int recipeID, int versionNumber) {
         /**
          * SKal man overhovedet kunne det her?
          * Skal vi bare lave den alligevel?
@@ -133,7 +134,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             c.commit();
 
         } catch(SQLException e){
-            throw new DALException(e.getMessage());
+        e.getMessage();
     }
     }
 }

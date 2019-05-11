@@ -1,18 +1,20 @@
 package dto;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 public class RecipeDTO implements Serializable, IRecipeDTO {
 
-    int recipeID;
-    String ProductName;
-    Date changeDate;
-    int versionnumber;
-    String status;
-    double volume;
-    List<IIngredientListDTO> ingredientListDTOList;
+    private int recipeID;
+    private String ProductName;
+    private Date changeDate;
+    private int versionnumber;
+    private String status;
+    private Double volume;
+    private List<IIngredientListDTO> ingredientListDTOList;
 
     public Date getChangeDate() {
         return changeDate;
@@ -42,11 +44,11 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
         return volume;
     }
 
+    //Setter functions
+
     public void setStatus(String status) {
         this.status = status;
     }
-
-
 
     public void setChangeDate(Date changeDate) {
         this.changeDate = changeDate;
@@ -56,7 +58,7 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
         ProductName = productName;
     }
 
-    public void setVolume(double volume) {
+    public void setVolume(Double volume) {
         this.volume = volume;
     }
 
@@ -67,4 +69,22 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
     public void setVersionnumber(int versionnumber) {
         this.versionnumber = versionnumber;
     }
+
+    @Override
+    public IRecipeDTO makeRecipeFromResultset(ResultSet resultSet) throws SQLException {
+
+        IRecipeDTO recipeDTO = new RecipeDTO();
+
+        recipeDTO.setStatus (resultSet.getString("Status"));
+        recipeDTO.setChangeDate(resultSet.getDate("Ændringsdato")); //TODO: Implementer dato format
+        recipeDTO.setProductName(resultSet.getString("Produktnavn"));
+        recipeDTO.setVolume(resultSet.getDouble("Volumen"));
+        recipeDTO.setRecipeID(resultSet.getInt("opskrift ID"));
+        recipeDTO.setVersionnumber(resultSet.getInt("Versionsnummer"));
+
+        //TODO: Implementer setfunktion af CommodityBatchListe.
+
+        return recipeDTO;
+    }
+
 }

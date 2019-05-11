@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 public class DataSource {
 
+    //TODO: Gustav forklar hvad der foregår her. Er det done?
+
     /**
      * Meget simpel klasse, bruger Hikaris data pooling framework til at lave noget connection pooling.
      */
@@ -16,9 +18,9 @@ public class DataSource {
     private static HikariDataSource ds;
 
     static {
-        config.setJdbcUrl( "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s185031?" );
-        config.setUsername( "s185031" );
-        config.setPassword( "UfudYEA2p7RmipWZXxT2R" );
+        config.setJdbcUrl( "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s180557?" );
+        config.setUsername( "s180577" );
+        config.setPassword( "SnM6HsTt8iPhYpasthnCW" );
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );

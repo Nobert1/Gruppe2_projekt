@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import exception.DALException;
+import Exception.DALException;
 import dto.IUserDTO;
 import dto.*;
 
@@ -16,7 +16,7 @@ public class UserDAO implements IUserDAO {
     @Override
     public IUserDTO getUser(int userId) throws DALException {
 
-        String SQL = "SELECT * FROM Brugere JOIN Roller ON Brugere.BrugerID = Roller.BrugerID WHERE (?) = (?)";
+        String SQL = "SELECT * FROM Brugere JOIN roles ON users.userId = roles.userId WHERE (?) = (?)";
         //TODO Implement this - should retrieve a user from db and parse it to a UserDTO
 
 
@@ -35,7 +35,6 @@ public class UserDAO implements IUserDAO {
             //TODO: Make a user from the resultset
             c.commit();
             return user;
-
         } catch (SQLException e) {
             throw new DALException(e.getMessage());
         }
@@ -51,7 +50,7 @@ public class UserDAO implements IUserDAO {
         try (Connection c = DataSource.getConnection()) {
 
             Statement statement = c.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM Brugere JOIN Roller ON Brugere.BrugerID = Roller.BrugerID");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM users JOIN roles ON users.userId = roles.userId");
             List<IUserDTO> userList = new ArrayList<>();
             while (resultSet.next()){
                 IUserDTO user = makeUserFromResultset(resultSet);
@@ -65,11 +64,11 @@ public class UserDAO implements IUserDAO {
 
     private IUserDTO makeUserFromResultset(ResultSet resultSet) throws SQLException {
         IUserDTO user = new userDTO();
-        user.setUserId(resultSet.getInt("BrugerID"));
-        user.setUserName(resultSet.getString("brugerNavn"));
-        user.setIni(resultSet.getString("Initialer"));
+        user.setUserId(resultSet.getInt("userId"));
+        user.setUserName(resultSet.getString("userName"));
+        user.setIni(resultSet.getString("ini"));
         //Extract roles as String
-        String roleString = resultSet.getString("Rolle");
+        String roleString = resultSet.getString("roles");
         //Split string by ;
         String[] roleArray = roleString.split(";");
         //Convert to List
@@ -78,5 +77,3 @@ public class UserDAO implements IUserDAO {
         return user;
     }
 }
-
-
