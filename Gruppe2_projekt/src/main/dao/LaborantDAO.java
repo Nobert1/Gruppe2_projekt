@@ -3,22 +3,21 @@ package dao;
 import dto.*;
 import exception.DALException;
 
+import javax.management.relation.Role;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Scanner;
-import java.util.*;
 
 import java.sql.*;
 
 
-    //TODO Jeg ved ikke helt hvad den her klasse den har brug for.
+//TODO Jeg ved ikke helt hvad den her klasse den har brug for.
 
 /**
  * Author - Gustav EMil Nobert s185031 and Martin Wassman s185029?
  */
 
 public class LaborantDAO extends UserDAO implements ILaborantDAO {
-
 
     @Override
     public void prepareProductBatch(IProductBatchDTO productBatchDTO) {
@@ -35,11 +34,11 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
             for (ICommodityBatchDTO commodityBatchDTO : productBatchDTO.getCommodityBatchDTOList()) {
 
-                System.out.println("you need to withdraw " + commodityBatchDTO.getMængde() + " from batch number = " + commodityBatchDTO.getMængde());
+                System.out.println("you need to withdraw " + commodityBatchDTO.getActualAmount() + " from batch number = " + commodityBatchDTO.getActualAmount());
                 System.out.println("how much did you withdraw?");
                 int withdrawen = scan.nextInt();
 
-                while (withdrawen >= commodityBatchDTO.getMængde() * 0.98 && commodityBatchDTO.getMængde() * 1.02 >= withdrawen) {
+                while (withdrawen >= commodityBatchDTO.getActualAmount() * 0.98 && commodityBatchDTO.getActualAmount() * 1.02 >= withdrawen) {
                     System.out.println("withdrawn amount not within the boundaries, please withdraw agian");
                     System.out.println("How much did you withdraw?");
                     withdrawen = scan.nextInt();
@@ -51,7 +50,7 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             }
 
             PreparedStatement statement2 = c.prepareStatement("UPDATE Productbatch WHERE ID = (?) SET status = (?)");
-            statement2.setInt(1, productBatchDTO.getBatchID());
+            statement2.setInt(1, productBatchDTO.getProductBatchID());
             statement2.setString(2, "under production");
             int row = statement2.executeUpdate();
             int[] rows = statement1.executeBatch();
@@ -71,11 +70,11 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
 
             PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Produktbatch_beskrivelse WHERE BatchType = (?)");
-            statement1.setString(1, productBatchDTO.getProduktnavn());
+            statement1.setString(1, productBatchDTO.getProductName());
             ResultSet resultset1 = statement1.executeQuery();
 
 
-            statement.setInt(1, productBatchDTO.getBatchID());
+            statement.setInt(1, productBatchDTO.getProductBatchID());
             statement.setString(2, "finished");
 
             if (resultset1.next()) {
@@ -93,4 +92,4 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
     }
 
 
-    }
+}

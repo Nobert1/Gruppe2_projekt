@@ -82,15 +82,15 @@ public class DALTest {
 
     @Test
     public void LaborantTest() throws DALException {
+
+  /**
         try {
 
 
-
-
-    } catch (DALException e) {
-        e.getMessage();
-        fail();
-    }
+           } catch (DALException e) {
+             e.getMessage();
+              fail();
+           }**/
     }
 
     /**

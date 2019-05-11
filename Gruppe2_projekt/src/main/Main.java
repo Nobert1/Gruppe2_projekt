@@ -1,6 +1,6 @@
 import dao.DataSource;
 import dto.IUserDTO;
-import Exception.DALException;
+import exception.DALException;
 import java.util.*;
 import java.sql.*;
 
@@ -37,6 +37,8 @@ public class Main {
             if (resultSet.toString() == brugerID) {
                 validated = true;
                 System.out.println("Brugeren er valideret.");
+            } else {
+                System.out.println("Brugeren er ikke valideret.");
             }
             return validated;
 

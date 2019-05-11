@@ -32,7 +32,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
             statement.setInt(1, commodityBatchDTO.getBatchID());
             statement.setString(2, commodityBatchDTO.getProducerName());
-            statement.setDouble(3, commodityBatchDTO.getMængde());
+            statement.setDouble(3, commodityBatchDTO.getActualAmount());
             statement.setString(4, commodityBatchDTO.getCommodityName());
             statement.setBoolean(5, commodityBatchDTO.isRemainder());
 
@@ -86,7 +86,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
             PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager SET Mængde = (?), Råvare_navn = (?), rest = (?) WHERE BatchID = (?) AND Producentnavn = (?)");
 
-            statement1.setDouble(1, commodityBatchDTO.getMængde());
+            statement1.setDouble(1, commodityBatchDTO.getActualAmount());
             statement1.setString(2, commodityBatchDTO.getCommodityName());
             statement1.setBoolean(3, commodityBatchDTO.isRemainder());
             statement1.setInt(4, commodityBatchDTO.getBatchID());
@@ -169,8 +169,8 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             //Det her skal vel være en join af en art...... skal vidst også oprette det objekt der bliver sat ind.
 
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, ?, null, ?)");
-            statement2.setInt(1, productBatchDTO.getBatchID());
-            statement2.setString(2, productBatchDTO.getProduktnavn());
+            statement2.setInt(1, productBatchDTO.getProductBatchID());
+            statement2.setString(2, productBatchDTO.getProductName());
             //Den sidste værdi sættes til null da det er udløbsdato. Udløbsdato er først fastlagt når produktet er klar.
             statement2.setString(3, "Awaiting production");
 
@@ -212,8 +212,8 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             PreparedStatement statement1 = c.prepareStatement("UPDATE Produktbatch WHERE ID = (?) SET Producentnavn = (?), IngListeID = (?), Mængde = (?)");
             statement1.setInt(1, commodityBatchDTO.getBatchID());
             statement1.setString(2, commodityBatchDTO.getProducerName());
-            statement1.setInt(3, commodityBatchDTO.getingredientlistID());
-            statement1.setDouble(4, commodityBatchDTO.getMængde());
+            statement1.setInt(3, commodityBatchDTO.getBatchID()); //TODO Bør være ingredients list ID
+            statement1.setDouble(4, commodityBatchDTO.getActualAmount()); //TODO Var mængde??
 
             int row = statement1.executeUpdate();
             c.commit();
@@ -276,14 +276,14 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
              * Skal vi i virkeligheden have den tabel til gamle opskrifter? - Gustav
              * */
 
-            statement.setString(1, productBatchDTO.getProduktnavn());
+            statement.setString(1, productBatchDTO.getProductName());
             ResultSet resultset = statement.executeQuery();
 
             //Statement virker på workbench, test om det også virker her
             PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Råvare_batch_lager WHERE Råvare_navn = (?) HAVING MIN(Mængde) > (?)");
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Råvare_batch_liste VALUES (?, ?, ?)");
 
-            statement2.setInt(1, productBatchDTO.getBatchID());
+            statement2.setInt(1, productBatchDTO.getProductBatchID());
 
 
             while (resultset.next()) {
@@ -292,7 +292,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
                 ResultSet resultSet1 = statement1.executeQuery();
                 ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
                 commodityBatchDTO.setBatchID(resultSet1.getInt("BatchID"));
-                commodityBatchDTO.setMængde(resultSet1.getDouble("Mængde"));
+                commodityBatchDTO.setActualAmount(resultSet1.getDouble("Mængde"));
                 CommoditybatchList.add(commodityBatchDTO);
 
                 //De indsættes i den liste der bruges til at holde styr på det.

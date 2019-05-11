@@ -19,7 +19,7 @@ public class DataSource {
 
     static {
         config.setJdbcUrl( "jdbc:mysql://ec2-52-30-211-3.eu-west-1.compute.amazonaws.com/s180557?" );
-        config.setUsername( "s180577" );
+        config.setUsername( "s180557" );
         config.setPassword( "SnM6HsTt8iPhYpasthnCW" );
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
