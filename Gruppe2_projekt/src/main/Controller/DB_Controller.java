@@ -158,9 +158,9 @@ public class DB_Controller {
        int choice = 0;
         do {
            System.out.println("You are logged in as Admin.\nCreate user - Press 1\nDelete user - Press 2\nChange admin rights for user - press 3" +
-                   "\nTo exit press 4");
+                   "\nTo exit - Press 4");
            Scanner scan = new Scanner(System.in);
-           int choice = scan.nextInt();
+           choice = scan.nextInt();
            switch (choice) {
                case 1:
 
@@ -177,47 +177,60 @@ public class DB_Controller {
     }
 
     public void Laborant(LaborantDAO user) {
-        System.out.println("You are logged in as Laborant\nSee production Requests - Press 1\nSee active production - Press 2");
-        Scanner scan = new Scanner(System.in);
-        int choice = scan.nextInt();
-        switch (choice) {
-            case 1:
+       int choice = 0;
+       do {
+           System.out.println("You are logged in as Laborant\nSee production Requests - Press 1\nSee active production - Press 2" +
+                   "\nTo exit - Press 3");
+           Scanner scan = new Scanner(System.in);
+           choice = scan.nextInt();
+           switch (choice) {
+               case 1:
 
-            case 2:
+               case 2:
 
-            default:
+               default:
 
 
-        }
+           }
+       }while(choice!=3);
     }
 
+
         public void Pharmaceut(PharamaceutDAO user){
-            System.out.println("You are logged in as Pharmaceut\nCreate new recipe - Press 1\nSee/edit recipes - Press 2");
-            Scanner scan = new Scanner(System.in);
-            int choice = scan.nextInt();
-            switch (choice) {
-                case 1:
+            int choice = 0;
+            do {
+                System.out.println("You are logged in as Pharmaceut\nCreate new recipe - Press 1\nSee/edit recipes - Press 2" +
+                        "\nTo exit - Press 3");
+                Scanner scan = new Scanner(System.in);
+                choice = scan.nextInt();
+                switch (choice) {
+                    case 1:
 
-                case 2:
+                    case 2:
 
-                default:
-            }
+                    default:
+                }
+            }while(choice != 3);
 
         }
 
-        public void Produktionsleder (ProduktionsLederDAO user){
-            System.out.println("You are logged in asd Produktionsleder\nSee commodity storage - Press 1\nCreate/Edit Commodity batch - Press 2" +
-                    "\nCreate Produktion Request - Press 3");
-            Scanner scan = new Scanner(System.in);
-            int choice = scan.nextInt();
-            switch (choice){
-                case 1:
+        public void Produktionsleder (ProduktionsLederDAO user) {
+            int choice = 0;
+            do {
+                System.out.println("You are logged in asd Produktionsleder\nSee commodity storage - Press 1\nCreate/Edit Commodity batch - Press 2" +
+                        "\nCreate Produktion Request - Press 3\nTo exit - Press 4");
+                Scanner scan = new Scanner(System.in);
+                choice = scan.nextInt();
+                switch (choice) {
+                    case 1:
 
-                case 2:
+                    case 2:
 
-                case 3:
+                    case 3:
 
-                default:
+                    default:
+                }
+            }while(choice != 4);
         }
 }
 
