@@ -30,8 +30,6 @@ public class DB_Controller {
 
             System.out.println(brugerID);
 
-            //TODO: Tjek at brugeren har rettigheder til at agere således
-
             switch (rolleValg) {
                 case 1:
                     System.out.println("Du har valgt administrator");
@@ -70,35 +68,10 @@ public class DB_Controller {
                 default:
                     System.out.println("Det indtastede var ikke et af de fire valg.");
             }
-
             if (valid) {
                 accessGranted = true;
             }
-
         } while (!accessGranted);
-
-        //TODO: Hvis godkendt, sæt bruger som tilsvarende DAO.
-
-          /*  switch(rolleValg) {
-                case 1:
-                    System.out.printf("Valg for admin");
-                    break;
-                case 2:
-                    // code block
-                    System.out.printf("Valg for laborant");
-                    break;
-                case 3:
-                    // code block
-                    System.out.printf("Valg for pharmaceut");
-                    break;
-                case 4:
-                    // code block
-                    System.out.printf("Valg for produktionsleder");
-                    break;
-                default:
-                    // code block
-            }*/
-        //TODO: Implementer exit funktion.
     }
 
 
@@ -108,14 +81,14 @@ public class DB_Controller {
         IUserDAO UserDAO = new UserDAO();
         IUserDTO user = UserDAO.getUser(brugerID);
         if (user == null) {
-            System.out.println("Incorrect UserID.");
+            System.out.println("Ugyldigt UserID.");
         } else {
             for (String s : user.getRoles()) {
                 if (s.equals(role)) {
-                    System.out.println("Log in Successful");
+                    System.out.println("Log in Succesfuld");
                     validated = true;
                 } else {
-                    System.out.println("You are trying to log in as " + role + " which you do not have access to.");
+                    System.out.println("Du prøver at logge ind som " + role + " som du ikke har adgang til");
                 }
             }
         }
@@ -137,7 +110,7 @@ public class DB_Controller {
                 }
             }
             if (!validated) {
-                System.out.println("You do not have administrator authority.");
+                System.out.println("Du har ikke administrator privilegie");
             }
         }
         return validated;
@@ -146,8 +119,8 @@ public class DB_Controller {
     public void admin(AdminstratorDAO user)throws DALException {
        int choice = 0;
         do {
-           System.out.println("You are logged in as Admin.\nCreate user - Press 1\nDelete user - Press 2\nChange admin rights for user - press 3" +
-                   "\nTo exit - Press 4");
+           System.out.println("Du er logget ind som admin\nOpret Bruger - Tryk 1\nSlette bruger - Tryk 2\nÆndre admin rettigheder - Tryk 3" +
+                   "\nExit - Tryk 4");
            Scanner scan = new Scanner(System.in);
            choice = scan.nextInt();
            switch (choice) {
@@ -171,16 +144,12 @@ public class DB_Controller {
     public void Laborant(LaborantDAO user)throws DALException{
        int choice = 0;
        do {
-           System.out.println("You are logged in as Laborant\nSee production Requests - Press 1\nSee active production - Press 2" +
-                   "\nTo exit - Press 3");
+           System.out.println("Du er logget ind som laborant\nSee Produkt Requestst - Tryk 1\nSee aktive produktioner - Tryk 2" +
+                   "\nExit - Tryk 3");
            Scanner scan = new Scanner(System.in);
            choice = scan.nextInt();
            switch (choice) {
                case 1:
-                   IProductBatchDTO productBatchDTO = new ProductBatchDTO();
-                   productBatchDTO.setBatchID(1);
-
-                   user.prepareProductBatch(productBatchDTO);
 
                case 2:
 
@@ -195,8 +164,8 @@ public class DB_Controller {
         public void Pharmaceut(PharamaceutDAO user){
             int choice = 0;
             do {
-                System.out.println("You are logged in as Pharmaceut\nCreate new recipe - Press 1\nSee/edit recipes - Press 2" +
-                        "\nTo exit - Press 3");
+                System.out.println("Du er logget ind som Pharmaceut\nOpret opskrift - Tryk 1\nSe/rediger opskrifter - Tryk 2" +
+                        "\nExit - Tryk 3");
                 Scanner scan = new Scanner(System.in);
                 choice = scan.nextInt();
                 switch (choice) {
@@ -213,8 +182,8 @@ public class DB_Controller {
         public void Produktionsleder (ProduktionsLederDAO user) {
             int choice = 0;
             do {
-                System.out.println("You are logged in asd Produktionsleder\nSee commodity storage - Press 1\nCreate/Edit Commodity batch - Press 2" +
-                        "\nCreate Produktion Request - Press 3\nTo exit - Press 4");
+                System.out.println("Du er logget ind som Produktionsleder\nSee råvarebatch lager- Tryk 1\nSe/rediger råvarebatch - Tryk 2" +
+                        "\nOpret Produktion Request - Tryk 3\nExit - Tryk 4");
                 Scanner scan = new Scanner(System.in);
                 choice = scan.nextInt();
                 switch (choice) {
