@@ -1,6 +1,7 @@
 package dao;
 
 import dto.IUserDTO;
+import dto.userDTO;
 import exception.*;
 
 import java.sql.Connection;
@@ -43,6 +44,15 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             throw new DALException(e.getMessage());
         }
     }
+
+    public void createUserBasic()throws DALException{
+        IUserDTO user = new userDTO();
+
+
+
+    }
+
+
     @Override
     public void updateUser(IUserDTO user) throws DALException {
 
