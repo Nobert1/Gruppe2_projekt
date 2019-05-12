@@ -91,23 +91,29 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             Boolean chosenID = false;
 
             while(!chosenID) {
-                System.out.println("Vælg et 4 cifret brugerID");
+                System.out.println("Vælg et 4 cifret bruger ID");
                 brugerID = scan.nextInt();
+                System.out.println(String.valueOf(brugerID).length());
                 if (String.valueOf(brugerID).length() == 4 && brugerID >= 0) {
                     PreparedStatement rolesstatement = c.prepareStatement("SELECT BrugerID FROM Brugere");
                     ResultSet resultSet = rolesstatement.executeQuery();
                     c.commit();
-                    if(resultSet.next()) {
-                        while (resultSet.next()) {
-                            if (brugerID == resultSet.getInt("BrugerID")) {
+                    //if(resultSet.next()) {
+                    int counterUsers = 0;
+                    int counterIDs = 0;
+                    while (resultSet.next()) {
+                        counterUsers++;
+                            if (brugerID != resultSet.getInt("BrugerID")) {
+                                counterIDs++;
+                                }
+                            }
+                            if(counterIDs != counterUsers){
                                 System.out.println("Bruger ID'et er optaget");
                             } else {
-                                System.out.println("Bruger ID valgt: " + brugerID);
+                                System.out.println("BrugerID: " + brugerID + " er valgt.");
                                 chosenID = true;
-                                break;
                             }
-                        }
-                    }
+                    //}
                 } else {
                     System.out.println("Vælg et 4 cifret bruger ID");
                 }
@@ -215,9 +221,10 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             if(tempuser.getRoles().size() > 1) {
                 System.out.println(tempuser.getUserName() + " er administrator. Vil du fjerne admin privilegier for denne bruger?" +
                         "\nJa - Tryk 1\nNej - Tryk 2");
+
                 int choice = scan.nextInt();
                 if (choice == 1) {
-                    tempuser.getRoles().remove(2);
+                    tempuser.getRoles().remove(0);
                 }
             } else {
                     System.out.println(tempuser.getUserName() + " er ikke administrator. Vil du give brugeren administrator privilegier?" +
