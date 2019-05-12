@@ -20,7 +20,7 @@ import java.sql.*;
 public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
     @Override
-    public void prepareProductBatch(IProductBatchDTO productBatchDTO) {
+    public void prepareProductBatch(IProductBatchDTO productBatchDTO) throws DALException {
         try (Connection c = DataSource.getConnection()) {
 
             Scanner scan = new Scanner(System.in);
@@ -56,7 +56,6 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
                         }
                         System.out.println("Den afvejede mængde er ikke indenfor grænserne af den ønskede værdi, prøv igen ");
                     }
-
                     statement1.setInt(1, commodityBatchDTO.getBatchID());
                     statement1.setString(2, commodityBatchDTO.getProducerName());
                     statement1.setDouble(3, commodityBatchDTO.getActualAmount() - withdrawen);
@@ -64,6 +63,8 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
                 }
             }
             }
+
+
 
             PreparedStatement statement2 = c.prepareStatement("UPDATE Produktbatch SET status = (?) WHERE ProduktbatchID = (?) ");
 
@@ -73,12 +74,12 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             int[] rows = statement1.executeBatch();
             c.commit();
         } catch (SQLException e) {
-            e.getMessage();
+            throw new DALException(e.getMessage());
         }
     }
 
     @Override
-    public void finishBatch(IProductBatchDTO productBatchDTO) {
+    public void finishBatch(IProductBatchDTO productBatchDTO) throws DALException{
 
         try (Connection c = DataSource.getConnection()) {
 
@@ -106,7 +107,7 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             c.commit();
 
         } catch (SQLException e) {
-            e.getMessage();
+            throw new DALException(e.getMessage());
         }
     }
 

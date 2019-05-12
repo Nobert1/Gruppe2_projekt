@@ -16,7 +16,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
     //TODO primary key for opskrifterne skal være unikke og er derfor ID, versionsnummer. Det ville være fedt hvis versionsnummer kunne auto increment baseret på ID.
 
     @Override
-    public void createRecipe(IRecipeDTO recipeDTO) {
+    public void createRecipe(IRecipeDTO recipeDTO) throws DALException{
 
         try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
@@ -56,7 +56,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             c.commit();
 
         } catch (SQLException e) {
-            e.getMessage();
+            throw new DALException(e.getMessage());
         }
 
 
@@ -121,7 +121,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
     }
 
     @Override
-    public void deleteRecipe(int recipeID, int versionNumber) {
+    public void deleteRecipe(int recipeID, int versionNumber) throws DALException {
 
 
         try (Connection c = DataSource.getConnection()) {
@@ -137,7 +137,7 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             c.commit();
 
         } catch (SQLException e) {
-            e.getMessage();
+            throw new DALException(e.getMessage());
         }
     }
 

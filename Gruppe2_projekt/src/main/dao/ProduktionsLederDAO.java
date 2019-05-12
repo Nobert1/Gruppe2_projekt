@@ -160,7 +160,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     //TODO mangler den her ikke en metode eller to? F.eks noget med nogle opskrifter getRecipe etc.
 
     @Override
-    public void CreateProductBatch(IProductBatchDTO productBatchDTO)  {
+    public void CreateProductBatch(IProductBatchDTO productBatchDTO)  throws DALException{
 
         try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
@@ -181,7 +181,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
                 c.commit();
 
             } catch (SQLException e) {
-                e.getMessage();
+                throw new DALException(e.getMessage());
             }
 
     }
@@ -263,8 +263,47 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         }
     }
 
+    public List<Integer> RestList() throws DALException {
+
+        List<Integer> Restlist = new ArrayList<>();
+
+        try (Connection c = DataSource.getConnection()) {
+
+            Statement statement = c.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Råvare_batch_lager WHERE rest = 1");
+
+            while (resultSet.next()) {
+                Restlist.add(resultSet.getInt("BatchID"));
+            }
+
+        return Restlist;
+        } catch (SQLException e) {
+            throw new DALException(e.getMessage());
+        }
+    }
+
+        public List<String> ReorderList() throws DALException {
+
+        List<String> Orderlist = new ArrayList<>();
+
+        try (Connection c = DataSource.getConnection()) {
+
+            Statement statement = c.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Genbestillingsliste WHERE Genbestilles = 1");
+
+            while (resultSet.next()) {
+                Orderlist.add(resultSet.getString("Råvare_navn"));
+            }
+
+            return Orderlist;
+
+    } catch (SQLException e) {
+        throw new DALException(e.getMessage());
+    }
+    }
+
     @Override
-    public List<ICommodityBatchDTO> getCommodityBatches(IProductBatchDTO productBatchDTO) {
+    public List<ICommodityBatchDTO> getCommodityBatches(IProductBatchDTO productBatchDTO) throws DALException{
 
         List<ICommodityBatchDTO> CommoditybatchList = new ArrayList<>();
 
@@ -302,7 +341,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
                 c.commit();
 
         } catch (SQLException e) {
-            e.getMessage();
+            throw new DALException(e.getMessage());
         }
         return CommoditybatchList;
     }

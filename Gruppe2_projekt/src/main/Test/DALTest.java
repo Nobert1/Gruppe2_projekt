@@ -254,6 +254,56 @@ public class DALTest {
             assertTrue(produktionsLederDAO.SumCommodityBatches("salt") == sum1);
 
 
+        } catch (DALException e) {
+            e.getMessage();
+            fail();
+        }
+    }
+
+    @Test
+    public void TriggerTest() throws DALException {
+
+        try {
+            pharamaceutDAO.deleteRecipe(5, 5);
+            IRecipeDTO recipeDTO = new RecipeDTO();
+            recipeDTO.setRecipeID(5);
+            recipeDTO.setStatus("aktiv");
+            LocalDate localDate = LocalDate.now();
+            recipeDTO.setChangeDate(Date.valueOf(localDate));
+            recipeDTO.setProductName("Ipren");
+            recipeDTO.setVersionnumber(5);
+            recipeDTO.setDurability(200);
+
+
+            List<IIngredientDTO> ingredientListDTO = new ArrayList<>();
+            IIngredientDTO ingredientDTO = new IngredientDTO();
+            ingredientDTO.setAmount(5.0);
+            ingredientDTO.setCommodityName("Hydrogen");
+            ingredientDTO.setIngredientListID(1);
+            ingredientDTO.setVersionsnummer(1);
+            ingredientListDTO.add(ingredientDTO);
+
+            recipeDTO.setIngredientListDTOList(ingredientListDTO);
+
+            pharamaceutDAO.createRecipe(recipeDTO);
+            produktionsLederDAO.DeleteCommodityBatch(1, "SaltMinen");
+            ICommodityBatchDTO commodityBatchDTO3 = new CommodityBatchDTO();
+            commodityBatchDTO3.setProducerName("SaltMinen");
+            commodityBatchDTO3.setBatchID(1);
+            commodityBatchDTO3.setActualAmount(2.0);
+            commodityBatchDTO3.setCommodityName("salt");
+            commodityBatchDTO3.setRemainder(false);
+            produktionsLederDAO.createCommodityBatch(commodityBatchDTO3);
+            produktionsLederDAO.UpdateCommodityBatch(commodityBatchDTO3);
+
+            List<String> orderlist = produktionsLederDAO.ReorderList();
+            List<Integer> Restlist = produktionsLederDAO.RestList();
+
+            assertTrue(orderlist.size() == 1);
+            assertTrue(Restlist.size() == 1);
+
+
+
 
 
         } catch (DALException e) {

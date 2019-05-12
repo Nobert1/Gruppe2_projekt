@@ -1,8 +1,4 @@
 
-Tabellerne ser sådan her ud (endnu ikke oprettet i min database da jeg bliver ved med at lave ændringer.)
-
-
-
 CREATE TABLE if not exists Opskrifter (
 opskriftID int AUTO_INCREMENT,
 Produktnavn varchar(45),
@@ -23,11 +19,8 @@ CONSTRAINT FK1 FOREIGN KEY (IngListeID, versionsnummer) references Opskrifter (o
 ON DELETE CASCADE
 );
 
-DROP TABLE Produktbatch;
-DROP TABLE Råvare_batch_liste;
 CREATE TABLE if not exists Produktbatch (
 ProduktbatchID int primary key auto_increment,
-Produktnavn varchar(45) references Opskrifter.Batch_navn,
 Udløbsdato date,
 opskriftID int references Opskrifter.opskriftID,
 versionsnummer int references Opskrifter.versionsnummer,
@@ -59,7 +52,6 @@ Råvare_navn varchar(45) primary key UNIQUE,
 Genbestilles boolean
 );
 
-DROP TABLE Brugere;
 CREATE TABLE if not exists Brugere (
 BrugerID int primary key,
 brugerNavn varchar(45),
@@ -72,6 +64,48 @@ Rolle varchar(45),
 CONSTRAINT primary key pk1 (BrugerID, Rolle)
 );
 
+DELIMITER $$
+CREATE TRIGGER Update_Lager_status AFTER UPDATE ON Råvare_batch_lager
+FOR EACH ROW
+BEGIN
+DECLARE y int;
+DECLARE x int;
+SET y = (SELECT MAX(Mængde) * 2 FROM Ingrediensliste WHERE Ingrediensliste.Råvare_navn = new.Råvare_navn);
+SET x = (SELECT MAX(Mængde) FROM Råvare_batch_lager WHERE Råvare_batch_lager.Råvare_navn = new.Råvare_navn);
+IF y > x THEN
+UPDATE Genbestillingsliste SET Genbestilles = 1 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+ELSE
+UPDATE Genbestillingsliste SET Genbestilles = 0 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+END IF;
+END $$
+DELIMITER ;
 
+DELIMITER $$
+CREATE TRIGGER Insert_Lager_status AFTER INSERT ON Råvare_batch_lager
+FOR EACH ROW
+BEGIN
+DECLARE y int;
+DECLARE x int;
+SET y = (SELECT MAX(Mængde) * 2 FROM Ingrediensliste WHERE Ingrediensliste.Råvare_navn = new.Råvare_navn);
+SET x = (SELECT MAX(Mængde) FROM Råvare_batch_lager WHERE Råvare_batch_lager.Råvare_navn = new.Råvare_navn);
+IF y > x THEN
+UPDATE Genbestillingsliste SET Genbestilles = 1 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+ELSE
+UPDATE Genbestillingsliste SET Genbestilles = 0 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER Rest BEFORE UPDATE ON Råvare_batch_lager
+FOR EACH ROW
+BEGIN
+DECLARE y int;
+SET y = (SELECT MIN(Mængde) FROM Ingrediensliste WHERE Ingrediensliste.Råvare_navn = new.Råvare_navn);
+IF y > new.Mængde THEN
+ SET new.rest = 1;
+END IF;
+END $$
+DELIMITER ;
 
 
