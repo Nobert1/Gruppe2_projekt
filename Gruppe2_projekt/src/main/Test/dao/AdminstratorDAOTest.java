@@ -30,7 +30,7 @@ class AdminstratorDAOTest {
         admin.createUser(testUser);
 
         ByteArrayInputStream in = new ByteArrayInputStream(("Alex a" + System.lineSeparator() + "AA" + System.lineSeparator() +
-                "1" + System.lineSeparator() + "1" + System.lineSeparator() + "1111").getBytes());
+                "1" + System.lineSeparator() + "1" + System.lineSeparator() + "2222").getBytes());
         System.setIn(in);
         admin.createUserBasic();
         System.setIn(System.in);
