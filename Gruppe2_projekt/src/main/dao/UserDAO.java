@@ -42,7 +42,6 @@ public class UserDAO implements IUserDAO {
     public List<IUserDTO> getUserList() throws DALException {
 
 
-        // Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
 
         try (Connection c = DataSource.getConnection()) {
 
@@ -83,9 +82,3 @@ public class UserDAO implements IUserDAO {
         }
     }
 }
-/* String roleString = resultSet.getString("Rolle");
-        //Split string by ;
-        String[] roleArray = roleString.split(";");
-        //Convert to List
-        List<String> roleList = Arrays.asList(roleArray);
-        user.setRoles(roleList);*/

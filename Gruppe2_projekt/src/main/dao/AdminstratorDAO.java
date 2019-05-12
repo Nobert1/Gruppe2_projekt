@@ -138,7 +138,7 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             statement.setString(2, user.getIni());
             List<String> roleStrings = user.getRoles();
 
-            PreparedStatement getRolesStatement = c.prepareStatement("DELETE FROM Roller WHERE userId = ?");
+            PreparedStatement getRolesStatement = c.prepareStatement("DELETE FROM Roller WHERE BrugerID = ?");
             getRolesStatement.setInt(1,user.getUserId());
             getRolesStatement.executeUpdate();
 

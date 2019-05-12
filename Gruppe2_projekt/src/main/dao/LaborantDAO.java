@@ -13,12 +13,15 @@ import java.sql.*;
 
 //TODO Jeg ved ikke helt hvad den her klasse den har brug for.
 
-/**
- * Author - Gustav EMil Nobert s185031 and Martin Wassman s185029?
- */
+
 
 public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
+    /**
+     * Laborant gør to ting, forbereder batches og afslutter dem.
+     * @param productBatchDTO
+     * @throws DALException
+     */
     @Override
     public void prepareProductBatch(IProductBatchDTO productBatchDTO) throws DALException {
         try (Connection c = DataSource.getConnection()) {

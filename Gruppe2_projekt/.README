@@ -1,0 +1,115 @@
+
+Før programmet køres skal tabellerne og de tilhørende triggers oprettes, hvis der bruges en ny database.
+
+Når testene skal køres er triggertest afhængig af at blive kørt først, de andre tests kan køre uafhængige af de andre. 
+
+CREATE TABLE if not exists Opskrifter (
+opskriftID int AUTO_INCREMENT,
+Produktnavn varchar(45),
+Ændringsdato date,
+Opbevarings_dage int,
+versionsnummer int,
+status varchar(45),
+CONSTRAINT primary key pk1 (opskriftID, versionsnummer)
+);
+
+CREATE TABLE if not exists Ingrediensliste (
+Råvare_navn varchar(45),
+Mængde double,
+IngListeID int references Opskrifter.opskriftID,
+versionsnummer int references Opskrifter.versionsnummer,
+PRIMARY KEY (Råvare_navn, IngListeID, versionsnummer),
+CONSTRAINT FK1 FOREIGN KEY (IngListeID, versionsnummer) references Opskrifter (opskriftID, versionsnummer)
+ON DELETE CASCADE
+);
+
+CREATE TABLE if not exists Produktbatch (
+ProduktbatchID int primary key auto_increment,
+Udløbsdato date,
+opskriftID int references Opskrifter.opskriftID,
+versionsnummer int references Opskrifter.versionsnummer,
+status varchar(45)
+);
+
+CREATE TABLE if not exists Råvare_batch_liste (
+Råvarebatch_liste_ID int,
+BatchID int references Råvare_batch_lager.BatchID,
+Producentnavn varchar(45) references Råvare_batch_lager.producentnavn,
+primary key (BatchID, Producentnavn, Råvarebatch_liste_ID),
+FOREIGN KEY (Råvarebatch_liste_ID) references Produktbatch (ProduktbatchID)
+ON DELETE CASCADE
+);
+
+CREATE TABLE if not exists Råvare_batch_lager (
+BatchID int,
+producentnavn varchar(45),
+Mængde double,
+Råvare_navn varchar(45),
+rest boolean,
+INDEX Mængde_index (Mængde),
+primary key (BatchID, producentnavn)
+);
+
+DROP TABLE Genbestillingsliste;
+CREATE TABLE if not exists Genbestillingsliste (
+Råvare_navn varchar(45) primary key UNIQUE,
+Genbestilles boolean
+);
+
+CREATE TABLE if not exists Brugere (
+BrugerID int primary key,
+brugerNavn varchar(45),
+Initialer varchar (45)
+);
+
+CREATE TABLE if not exists Roller (
+BrugerID int references Brugere.BrugerID ON DELETE CASCADE,
+Rolle varchar(45),
+CONSTRAINT primary key pk1 (BrugerID, Rolle)
+);
+
+DELIMITER $$
+CREATE TRIGGER Update_Lager_status AFTER UPDATE ON Råvare_batch_lager
+FOR EACH ROW
+BEGIN
+DECLARE y int;
+DECLARE x int;
+SET y = (SELECT MAX(Mængde) * 2 FROM Ingrediensliste WHERE Ingrediensliste.Råvare_navn = new.Råvare_navn);
+SET x = (SELECT MAX(Mængde) FROM Råvare_batch_lager WHERE Råvare_batch_lager.Råvare_navn = new.Råvare_navn);
+IF y > x THEN
+UPDATE Genbestillingsliste SET Genbestilles = 1 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+ELSE
+UPDATE Genbestillingsliste SET Genbestilles = 0 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER Insert_Lager_status AFTER INSERT ON Råvare_batch_lager
+FOR EACH ROW
+BEGIN
+DECLARE y int;
+DECLARE x int;
+SET y = (SELECT MAX(Mængde) * 2 FROM Ingrediensliste WHERE Ingrediensliste.Råvare_navn = new.Råvare_navn);
+SET x = (SELECT MAX(Mængde) FROM Råvare_batch_lager WHERE Råvare_batch_lager.Råvare_navn = new.Råvare_navn);
+IF y > x THEN
+UPDATE Genbestillingsliste SET Genbestilles = 1 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+ELSE
+UPDATE Genbestillingsliste SET Genbestilles = 0 WHERE new.Råvare_navn = Genbestillingsliste.Råvare_navn;
+END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER Rest BEFORE UPDATE ON Råvare_batch_lager
+FOR EACH ROW
+BEGIN
+DECLARE y int;
+SET y = (SELECT MIN(Mængde) FROM Ingrediensliste WHERE Ingrediensliste.Råvare_navn = new.Råvare_navn);
+IF y > new.Mængde THEN
+ SET new.rest = 1;
+END IF;
+END $$
+DELIMITER ;
+
+

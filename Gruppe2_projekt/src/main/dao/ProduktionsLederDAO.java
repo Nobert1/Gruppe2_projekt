@@ -16,10 +16,10 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
 
 
-    //TODO burde product batches status værdi laves som en enum så den ikke kan få stavefejl, og alt muligt andet?
 
     /**
-     * Commodity batch methods - s185031 Gustav Emil Nobert
+     * Produktionslederen er en rolle med meget ansvar. Udover CRUD operationer for både commodity batches og for produkt batches
+     * kan han summere commodity batches, finde hvilke råvarer der skal genbestilles, og hvilke der er markeret som en rest.
      * @param commodityBatchDTO
      * @throws DALException
      */
@@ -108,12 +108,9 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         double sum = -1;
         try (Connection c = DataSource.getConnection()) {
 
-            //TODO - det her kan godt blivee rigtigt sofisikeret, vil vi returnere en liste eller vil vi hellere der bare bliver søgt
-            //På et råvarenavn?
 
             PreparedStatement statement = c.prepareStatement("SELECT SUM(Mængde) AS \"total mængde\" FROM Råvare_batch_lager WHERE Råvare_navn = ? AND rest = 0");
 
-            //1 tallet er booleans, tror 1 betyder falsk.
 
             statement.setString(1, commodityname);
 
@@ -132,7 +129,6 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     @Override
     public List<ICommodityBatchDTO> getCommodityBatchList() throws DALException {
 
-        // Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
         try (Connection c = DataSource.getConnection()) {
             List<ICommodityBatchDTO> commodityBatchDTOList = new ArrayList<>();
             Statement statement = c.createStatement();
@@ -149,15 +145,8 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         }
     }
 
-    /**
-     * Product batch methods. - Gustav Emil Nobert
-     * @param productBatchDTO
-     * @return
-     *
-     * PRODUCT BATCHES STARTS NOW
-     */
 
-    //TODO mangler den her ikke en metode eller to? F.eks noget med nogle opskrifter getRecipe etc.
+
 
     @Override
     public void CreateProductBatch(IProductBatchDTO productBatchDTO)  throws DALException{
@@ -214,8 +203,8 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
             PreparedStatement statement1 = c.prepareStatement("UPDATE Produktbatch SET Producentnavn = (?), IngListeID = (?), Mængde = (?) WHERE ID = (?)");
             statement1.setString(1, commodityBatchDTO.getProducerName());
-            statement1.setInt(2, commodityBatchDTO.getBatchID()); //TODO Bør være ingredients list ID
-            statement1.setDouble(3, commodityBatchDTO.getActualAmount()); //TODO Var mængde??
+            statement1.setInt(2, commodityBatchDTO.getBatchID());
+            statement1.setDouble(3, commodityBatchDTO.getActualAmount());
             statement1.setInt(4, commodityBatchDTO.getBatchID());
 
             int row = statement1.executeUpdate();
@@ -226,7 +215,6 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         }
     }
 
-    //Der skal også slette i råvarebatch liste. On delete cascade måske?
     @Override
     public void DeleteProductBatch(int batchID) throws DALException {
         try (Connection c = DataSource.getConnection()) {
@@ -245,7 +233,6 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     @Override
     public List<IProductBatchDTO> getProductBatchList() throws DALException {
 
-        // Skal den her metode beskyttes? den får jo bare en liste så det vil et nej?
 
         try (Connection c = DataSource.getConnection()) {
 

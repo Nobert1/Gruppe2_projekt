@@ -15,6 +15,45 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
     //TODO Delte? Igen hvordan undgår vi at den varchar der bliver fyldt med alt muligt andet.
     //TODO primary key for opskrifterne skal være unikke og er derfor ID, versionsnummer. Det ville være fedt hvis versionsnummer kunne auto increment baseret på ID.
 
+    /**
+     *
+     * Pharmaceuten foretager CRUD operationer på opskrifter.
+     * @param
+     * @throws DALException
+     */
+
+    @Override
+    public void insertintoGenbestillingsliste(String commodity) throws DALException {
+        try (Connection c = DataSource.getConnection()) {
+            c.setAutoCommit(false);
+            PreparedStatement statement = c.prepareStatement("INSERT INTO Genbestillingsliste VALUES ((?),(?))");
+            statement.setString(1, commodity);
+            statement.setBoolean(2, false);
+
+            int row = statement.executeUpdate();
+            c.commit();
+
+        } catch (SQLException e) {
+            throw new DALException(e.getMessage());
+        }
+        }
+
+        @Override
+    public void deletefromgenbestillingsliste(String commodity) throws DALException {
+        try (Connection c = DataSource.getConnection()) {
+            c.setAutoCommit(false);
+            PreparedStatement statement = c.prepareStatement("DELETE FROM Genbestillingsliste WHERE Råvare_navn = (?)");
+            statement.setString(1, commodity);
+
+            statement.execute();
+            c.commit();
+
+        } catch (SQLException e) {
+            throw new DALException(e.getMessage());
+        }
+    }
+
+
     @Override
     public void createRecipe(IRecipeDTO recipeDTO) throws DALException{
 
@@ -23,7 +62,6 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
 
 
             PreparedStatement statement = c.prepareStatement("INSERT INTO Opskrifter VALUES ((?),(?),(?),(?),(?),(?))");
-
 
             statement.setInt(1, recipeDTO.getRecipeID());
             statement.setString(2, recipeDTO.getProductName());
@@ -34,9 +72,8 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
             statement.setString(6, recipeDTO.getStatus());
 
 
-            //TODO Skal vi lade objektet have det her eller nah?
-
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Ingrediensliste VALUES ((?),(?),(?),(?))");
+
 
             statement2.setInt(3, recipeDTO.getRecipeID());
             statement2.setInt(4, recipeDTO.getVersionnumber());
@@ -86,18 +123,18 @@ public class PharamaceutDAO extends UserDAO implements IPharamaceutDAO {
                 int row = statement.executeUpdate();
             }
 
-            PreparedStatement statement = c.prepareStatement("INSERT INTO Opskrifter VALUES ((?),(?),(?),(?),(?))");
+            PreparedStatement statement = c.prepareStatement("INSERT INTO Opskrifter VALUES ((?),(?),(?),(?),(?), (?))");
 
 
             statement.setInt(1, recipeDTO.getRecipeID());
             statement.setString(2, recipeDTO.getProductName());
             LocalDate localDate = LocalDate.now();
             statement.setDate(3, Date.valueOf(localDate));
-            statement.setInt(4, recipeDTO.getVersionnumber());
-            statement.setString(5, recipeDTO.getStatus());
+            statement.setInt(4, recipeDTO.getDurability());
+            statement.setInt(5, recipeDTO.getVersionnumber());
+            statement.setString(6, recipeDTO.getStatus());
 
 
-            //TODO Skal vi lade objektet have det her eller nah?
 
             PreparedStatement statement2 = c.prepareStatement("INSERT INTO Ingrediensliste VALUES ((?),(?),(?),(?))");
 
