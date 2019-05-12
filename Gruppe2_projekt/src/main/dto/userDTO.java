@@ -12,7 +12,6 @@ public class userDTO implements Serializable, IUserDTO {
     private String userName;
     private String ini;
     private List<String> roles;
-    private boolean Admin;
 
     public userDTO() {
         this.roles = new ArrayList<>();
@@ -73,16 +72,6 @@ public class userDTO implements Serializable, IUserDTO {
     @Override
     public boolean removeRole(String role){
         return this.roles.remove(role);
-    }
-
-    @Override
-    public boolean getAdmin() {
-        return Admin;
-    }
-
-    @Override
-    public void setAdmin(boolean admin) {
-        this.Admin = admin;
     }
 
     @Override

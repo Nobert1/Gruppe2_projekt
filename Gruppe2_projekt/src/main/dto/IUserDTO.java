@@ -23,7 +23,4 @@ public interface IUserDTO {
 
     boolean removeRole(String role);
 
-    void setAdmin(boolean isAdmin);
-
-    boolean getAdmin();
 }
