@@ -10,7 +10,13 @@ import exception.DALException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Controller class from which the user logs in, the system systems checks the database for the user, and logs them into
+ * the system. They are then given the options that cohere to their role.
+ */
+
 public class DB_Controller {
+
 
     public void logIn() throws DALException {
         boolean accessGranted = false;
