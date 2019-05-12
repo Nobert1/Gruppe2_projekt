@@ -2,13 +2,9 @@ package Controller;
 
 import dao.*;
 import dto.IUserDTO;
-import dto.userDTO;
+import dto.UserDTO;
 import exception.DALException;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,7 +17,7 @@ public class DB_Controller {
 
         //only for testing purposes BABY!
         AdminstratorDAO admin = new AdminstratorDAO();
-        IUserDTO testUser = new userDTO();
+        IUserDTO testUser = new UserDTO();
         testUser.setUserId(13);
         testUser.setUserName("Per Hansen");
         testUser.setIni("PH");

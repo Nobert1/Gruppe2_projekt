@@ -6,14 +6,14 @@ import java.util.List;
 
 //TODO: Bruges til brugere og administratorer? Implementer som i opgaven (bruger superklasse med admin som bool attribut).
 
-public class userDTO implements Serializable, IUserDTO {
+public class UserDTO implements Serializable, IUserDTO {
 
     private int	userId;
     private String userName;
     private String ini;
     private List<String> roles;
 
-    public userDTO() {
+    public UserDTO() {
         this.roles = new ArrayList<>();
     }
 

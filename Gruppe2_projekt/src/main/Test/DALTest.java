@@ -26,7 +26,7 @@ public class DALTest {
     public void userTest() throws DALException {
         try {
 
-            IUserDTO testUser = new userDTO();
+            IUserDTO testUser = new UserDTO();
             testUser.setUserId(13);
             testUser.setUserName("Per Hansen");
             testUser.setIni("PH");

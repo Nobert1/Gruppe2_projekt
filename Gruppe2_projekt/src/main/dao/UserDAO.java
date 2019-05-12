@@ -63,7 +63,7 @@ public class UserDAO implements IUserDAO {
     }
 
     private IUserDTO makeUserFromResultset(ResultSet resultSet) throws SQLException {
-        IUserDTO user = new userDTO();
+        IUserDTO user = new UserDTO();
         user.setUserId(resultSet.getInt("BrugerID"));
         user.setUserName(resultSet.getString("brugerNavn"));
         user.setIni(resultSet.getString("Initialer"));
