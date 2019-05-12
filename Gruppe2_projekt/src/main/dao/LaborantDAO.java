@@ -45,19 +45,18 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
                     System.out.println("Du skal afveje " + resultSet.getDouble("Mængde") + " gram fra batch nummer "
                             + commodityBatchDTO.getBatchID() + " som er produceret af " + commodityBatchDTO.getProducerName());
 
-                    double withdrawen = 0;
-                    while (true) {
+                    double withdrawn = 0;
+
+                    do{
                         System.out.println("Hvor meget afvejede du? ");
-                        withdrawen = resultSet.getDouble("Mængde");
-                        if (withdrawen >= resultSet.getDouble("Mængde") * 0.98 && resultSet.getDouble("Mængde") * 1.02 >= withdrawen) {
-                            break;
-                        }
+                        withdrawn = resultSet.getDouble("Mængde");
                         System.out.println("Den afvejede mængde er ikke indenfor grænserne af den ønskede væridi, prøv igen ");
-                    }
+                    }while(withdrawn <= resultSet.getDouble("Mængde") * 0.98 && resultSet.getDouble("Mængde") * 1.02 >= withdrawn);
+
 
                     statement1.setInt(1, commodityBatchDTO.getBatchID());
                     statement1.setString(2, commodityBatchDTO.getProducerName());
-                    statement1.setDouble(3, commodityBatchDTO.getActualAmount() - withdrawen);
+                    statement1.setDouble(3, commodityBatchDTO.getActualAmount() - withdrawn);
                     statement1.addBatch();
                 }
             }
