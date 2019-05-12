@@ -1,7 +1,7 @@
 
 Før programmet køres skal tabellerne og de tilhørende triggers oprettes, hvis der bruges en ny database.
 
-Når testene skal køres er triggertest afhængig af at blive kørt først, de andre tests kan køre uafhængige af de andre. 
+Når testene skal køres er triggertest afhængig af at blive kørt først, de andre tests kan køre uafhængige af de andre.
 
 CREATE TABLE if not exists Opskrifter (
 opskriftID int AUTO_INCREMENT,
