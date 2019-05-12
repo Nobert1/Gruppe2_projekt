@@ -79,7 +79,10 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             c.setAutoCommit(false);
             PreparedStatement statement = c.prepareStatement("DELETE FROM Brugere WHERE BrugerID = ?");
             statement.setInt(1, userId);
+            PreparedStatement statement1 = c.prepareStatement("DELETE FROM Roller WHERE BrugerID = ?");
+            statement1.setInt(1,userId);
             int rows = statement.executeUpdate();
+            int rows1 = statement1.executeUpdate();
             c.commit();
         } catch (SQLException e) {
             throw new DALException(e.getMessage());
