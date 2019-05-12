@@ -23,13 +23,13 @@ public interface IProduktionsLederDAO extends IUserDAO {
          *
          */
         public List<ICommodityBatchDTO> getCommodityBatches(IProductBatchDTO productBatchDTO);
-    public int SumCommodityBatches(String commodityname) throws DALException;
+    public double SumCommodityBatches(String commodityname) throws DALException;
 
     /**
      * Product Batch methods
      */
-    public List<ICommodityBatchDTO> CreateProductBatch(IProductBatchDTO productBatchDTO);
-    public ICommodityBatchDTO getProductBatch(int BatchID) throws DALException;
+    public void CreateProductBatch(IProductBatchDTO productBatchDTO);
+    public IProductBatchDTO getProductBatch(int BatchID) throws DALException;
     public void updateProductBatch(ICommodityBatchDTO commodityBatchDTO) throws DALException;
     public void DeleteProductBatch(int batchID) throws DALException;
     public List<IProductBatchDTO> getProductBatchList() throws DALException;

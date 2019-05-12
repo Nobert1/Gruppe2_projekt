@@ -8,6 +8,14 @@ import java.util.List;
 public interface IProductBatchDTO {
 
 
+    public int getBatchID();
+    public void setBatchID(int batchID);
+    public int getVersionsnummer();
+    public int getRecipeID();
+
+    public void setRecipeID(int recipeID);
+
+    public void setVersionsnummer(int versionsnummer);
     java.sql.Date getExpirationDate();
 
     int getProductBatchID();

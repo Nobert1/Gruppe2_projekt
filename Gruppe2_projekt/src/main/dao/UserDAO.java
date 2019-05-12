@@ -64,11 +64,11 @@ public class UserDAO implements IUserDAO {
 
     private IUserDTO makeUserFromResultset(ResultSet resultSet) throws SQLException {
         IUserDTO user = new userDTO();
-        user.setUserId(resultSet.getInt("userId"));
-        user.setUserName(resultSet.getString("userName"));
-        user.setIni(resultSet.getString("ini"));
+        user.setUserId(resultSet.getInt("BrugerID"));
+        user.setUserName(resultSet.getString("brugerNavn"));
+        user.setIni(resultSet.getString("Initialer"));
         //Extract roles as String
-        String roleString = resultSet.getString("roles");
+        String roleString = resultSet.getString("Rolle");
         //Split string by ;
         String[] roleArray = roleString.split(";");
         //Convert to List

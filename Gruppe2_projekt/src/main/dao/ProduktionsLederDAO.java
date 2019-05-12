@@ -53,7 +53,9 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             statement.setString(2, producername);
             ResultSet resultSet = statement.executeQuery();
             ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
-            commodityBatchDTO.makeCommodityBatchFromResultset(resultSet);
+            if (resultSet.next()) {
+            commodityBatchDTO = commodityBatchDTO.makeCommodityBatchFromResultset(resultSet);
+            }
 
             return commodityBatchDTO;
 
@@ -67,8 +69,9 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
         try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
 
-            PreparedStatement statement = c.prepareStatement("DELETE FROM Råvare_batch_lager WHERE BatchID = ? AND producentnavn = (?)");
+            PreparedStatement statement = c.prepareStatement("DELETE FROM Råvare_batch_lager WHERE BatchID = (?) AND producentnavn = (?)");
             statement.setInt(1, batchID);
+            statement.setString(2, producername);
             int rows = statement.executeUpdate();
             c.commit();
 
@@ -92,7 +95,6 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             statement1.setInt(4, commodityBatchDTO.getBatchID());
             statement1.setString(5, commodityBatchDTO.getProducerName());
 
-
             int row = statement1.executeUpdate();
             c.commit();
 
@@ -102,16 +104,14 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     }
 
     @Override
-    public int SumCommodityBatches(String commodityname) throws DALException{
-        int sum = -1;
+    public double SumCommodityBatches(String commodityname) throws DALException{
+        double sum = -1;
         try (Connection c = DataSource.getConnection()) {
 
             //TODO - det her kan godt blivee rigtigt sofisikeret, vil vi returnere en liste eller vil vi hellere der bare bliver søgt
             //På et råvarenavn?
 
-            PreparedStatement statement = c.prepareStatement("SELECT SUM(Mængde) " +
-                    "FROM Råvare_batch_lager " +
-                    "WHERE Råvare_navn = (?) AND rest = 1;");
+            PreparedStatement statement = c.prepareStatement("SELECT SUM(Mængde) AS \"total mængde\" FROM Råvare_batch_lager WHERE Råvare_navn = ? AND rest = 0");
 
             //1 tallet er booleans, tror 1 betyder falsk.
 
@@ -120,7 +120,7 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                sum = resultSet.getInt("Mængde");
+                sum = resultSet.getInt("total mængde");
             }
 
         } catch (SQLException e) {
@@ -160,21 +160,23 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
     //TODO mangler den her ikke en metode eller to? F.eks noget med nogle opskrifter getRecipe etc.
 
     @Override
-    public List<ICommodityBatchDTO> CreateProductBatch(IProductBatchDTO productBatchDTO)  {
-        List<ICommodityBatchDTO> CommoditybatchList = new ArrayList<>();
+    public void CreateProductBatch(IProductBatchDTO productBatchDTO)  {
 
         try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
 
             //Det her skal vel være en join af en art...... skal vidst også oprette det objekt der bliver sat ind.
 
-            PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, ?, null, ?)");
+            PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, ?, null, ?, ?, ?)");
             statement2.setInt(1, productBatchDTO.getProductBatchID());
             statement2.setString(2, productBatchDTO.getProductName());
             //Den sidste værdi sættes til null da det er udløbsdato. Udløbsdato er først fastlagt når produktet er klar.
-            statement2.setString(3, "Awaiting production");
+            statement2.setInt(3, productBatchDTO.getRecipeID());
+            statement2.setInt(4, productBatchDTO.getRecipeID());
+            statement2.setString(5, "Awaiting production");
 
-                int rows = statement2.executeUpdate();
+
+            int rows = statement2.executeUpdate();
 
                 c.commit();
 
@@ -182,21 +184,22 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
                 e.getMessage();
             }
 
-        return CommoditybatchList;
     }
 
 
     @Override
-    public ICommodityBatchDTO getProductBatch(int BatchID) throws DALException {
+    public IProductBatchDTO getProductBatch(int BatchID) throws DALException {
         try (Connection c = DataSource.getConnection()) {
 
-            PreparedStatement statement = c.prepareStatement("SELECT * FROM Produktbatch where BatchID = (?)");
+            PreparedStatement statement = c.prepareStatement("SELECT * FROM Produktbatch WHERE ProduktbatchID = (?)");
             statement.setInt(1, BatchID);
             ResultSet resultSet = statement.executeQuery();
-            ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
-            commodityBatchDTO.makeCommodityBatchFromResultset(resultSet);
+            IProductBatchDTO productBatchDTO = new ProductBatchDTO();
+            if (resultSet.next()) {
+            productBatchDTO = productBatchDTO.makeproductBatchFromResultset(resultSet);
+            }
 
-            return commodityBatchDTO;
+            return productBatchDTO;
 
         } catch (SQLException e) {
             throw new DALException(e.getMessage());
@@ -209,11 +212,11 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             c.setAutoCommit(false);
 
 
-            PreparedStatement statement1 = c.prepareStatement("UPDATE Produktbatch WHERE ID = (?) SET Producentnavn = (?), IngListeID = (?), Mængde = (?)");
-            statement1.setInt(1, commodityBatchDTO.getBatchID());
-            statement1.setString(2, commodityBatchDTO.getProducerName());
-            statement1.setInt(3, commodityBatchDTO.getBatchID()); //TODO Bør være ingredients list ID
-            statement1.setDouble(4, commodityBatchDTO.getActualAmount()); //TODO Var mængde??
+            PreparedStatement statement1 = c.prepareStatement("UPDATE Produktbatch SET Producentnavn = (?), IngListeID = (?), Mængde = (?) WHERE ID = (?)");
+            statement1.setString(1, commodityBatchDTO.getProducerName());
+            statement1.setInt(2, commodityBatchDTO.getBatchID()); //TODO Bør være ingredients list ID
+            statement1.setDouble(3, commodityBatchDTO.getActualAmount()); //TODO Var mængde??
+            statement1.setInt(4, commodityBatchDTO.getBatchID());
 
             int row = statement1.executeUpdate();
             c.commit();
@@ -267,37 +270,31 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
         try (Connection c = DataSource.getConnection()) {
             c.setAutoCommit(false);
-            PreparedStatement statement = c.prepareStatement("SELECT Råvare_navn, Mængde FROM Ingrediensliste JOIN Opskrifter " +
-                    "ON Opskrifter.opskriftID = Ingrediensliste.IngListeID" +
-                    "WHERE Opskrifter.Produktnavn = (?) AND Opskrifter.status = \"aktiv\"");
-
-            /**
-             * Her skal der måske være nogle ændringer, baseret på bare ID får vi så den rigtige?
-             * Skal vi i virkeligheden have den tabel til gamle opskrifter? - Gustav
-             * */
+            PreparedStatement statement = c.prepareStatement("SELECT Råvare_navn, Mængde FROM Ingrediensliste i " +
+                    "LEFT JOIN Opskrifter o ON " +
+                    "o.opskriftID = i.IngListeID AND i.versionsnummer = o.versionsnummer WHERE o.Produktnavn = (?) AND o.status = \"aktiv\"");
 
             statement.setString(1, productBatchDTO.getProductName());
             ResultSet resultset = statement.executeQuery();
 
             //Statement virker på workbench, test om det også virker her
-            PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Råvare_batch_lager WHERE Råvare_navn = (?) HAVING MIN(Mængde) > (?)");
-            PreparedStatement statement2 = c.prepareStatement("INSERT INTO Råvare_batch_liste VALUES (?, ?, ?)");
+            PreparedStatement statement1 = c.prepareStatement("SELECT BatchID, producentnavn, Råvare_navn, Mængde, rest FROM Råvare_batch_lager WHERE Råvare_navn = (?) GROUP BY BatchID, producentnavn HAVING MIN(Mængde) > (?);");
 
+            PreparedStatement statement2 = c.prepareStatement("INSERT INTO Råvare_batch_liste VALUES (?, ?, ?)");
             statement2.setInt(1, productBatchDTO.getProductBatchID());
 
-
+            ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
             while (resultset.next()) {
                 statement1.setString(1, resultset.getString("Råvare_navn"));
                 statement1.setDouble(2, resultset.getDouble("Mængde"));
                 ResultSet resultSet1 = statement1.executeQuery();
-                ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
-                commodityBatchDTO.setBatchID(resultSet1.getInt("BatchID"));
-                commodityBatchDTO.setActualAmount(resultSet1.getDouble("Mængde"));
-                CommoditybatchList.add(commodityBatchDTO);
-
+                if (resultSet1.next()) {
+                    commodityBatchDTO = commodityBatchDTO.makeCommodityBatchFromResultset(resultSet1);
+                    CommoditybatchList.add(commodityBatchDTO);
+                }
                 //De indsættes i den liste der bruges til at holde styr på det.
-                statement2.setString(2, resultset.getString("producentnavn"));
-                statement2.setInt(3, resultset.getInt("BatchID"));
+                statement2.setInt(2, commodityBatchDTO.getBatchID());
+                statement2.setString(3, commodityBatchDTO.getProducerName());
                 statement2.addBatch();
             }
                 int[] rows = statement2.executeBatch();

@@ -26,32 +26,47 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
             Scanner scan = new Scanner(System.in);
             c.setAutoCommit(false);
 
+            PreparedStatement statement = c.prepareStatement("SELECT Råvare_navn, Mængde FROM Ingrediensliste JOIN Opskrifter " +
+                    "ON Opskrifter.opskriftID = Ingrediensliste.IngListeID " +
+                    "WHERE Opskrifter.Produktnavn = (?) AND Opskrifter.status = \"aktiv\"");
 
-            PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager WHERE ID = (?) SET Mængde (?)");
+            statement.setString(1, productBatchDTO.getProductName());
+            ResultSet resultSet = statement.executeQuery();
+
 
 //Her ville det måske være fedt at lave noget andet end input scan. Men vi skal jo netop bruge noget input så der vel ingen anden måde at gøre det på.
 
+            PreparedStatement statement1 = c.prepareStatement("UPDATE Råvare_batch_lager SET Mængde = (?) WHERE BatchID = (?) AND producentnavn = (?)");
 
+            while (resultSet.next()) {
             for (ICommodityBatchDTO commodityBatchDTO : productBatchDTO.getCommodityBatchDTOList()) {
+                if (resultSet.getString("Råvare_navn").equals(commodityBatchDTO.getCommodityName())) {
 
-                System.out.println("you need to withdraw " + commodityBatchDTO.getActualAmount() + " from batch number = " + commodityBatchDTO.getActualAmount());
-                System.out.println("how much did you withdraw?");
-                int withdrawen = scan.nextInt();
+                    System.out.println("Du skal afveje " + resultSet.getDouble("Mængde") + " gram fra batch nummer "
+                            + commodityBatchDTO.getBatchID() + " som er produceret af " + commodityBatchDTO.getProducerName());
 
-                while (withdrawen >= commodityBatchDTO.getActualAmount() * 0.98 && commodityBatchDTO.getActualAmount() * 1.02 >= withdrawen) {
-                    System.out.println("withdrawn amount not within the boundaries, please withdraw agian");
-                    System.out.println("How much did you withdraw?");
-                    withdrawen = scan.nextInt();
+                    double withdrawen = 0;
+                    while (true) {
+                        System.out.println("Hvor meget afvejede du? ");
+                        withdrawen = resultSet.getDouble("Mængde");
+                        if (withdrawen >= resultSet.getDouble("Mængde") * 0.98 && resultSet.getDouble("Mængde") * 1.02 >= withdrawen) {
+                            break;
+                        }
+                        System.out.println("Den afvejede mængde er ikke indenfor grænserne af den ønskede væridi, prøv igen ");
+                    }
+
+                    statement1.setInt(1, commodityBatchDTO.getBatchID());
+                    statement1.setString(2, commodityBatchDTO.getProducerName());
+                    statement1.setDouble(3, commodityBatchDTO.getActualAmount() - withdrawen);
+                    statement1.addBatch();
                 }
-
-                statement1.setInt(1, commodityBatchDTO.getBatchID());
-                statement1.setDouble(2, commodityBatchDTO.getActualAmount() - withdrawen);
-                statement1.addBatch();
+            }
             }
 
-            PreparedStatement statement2 = c.prepareStatement("UPDATE Productbatch WHERE ID = (?) SET status = (?)");
-            statement2.setInt(1, productBatchDTO.getProductBatchID());
-            statement2.setString(2, "under production");
+            PreparedStatement statement2 = c.prepareStatement("UPDATE Produktbatch SET status = (?) WHERE ProduktbatchID = (?) ");
+
+            statement2.setString(1, "Afventer_produktion");
+            statement2.setInt(2, productBatchDTO.getProductBatchID());
             int row = statement2.executeUpdate();
             int[] rows = statement1.executeBatch();
             c.commit();
@@ -66,22 +81,24 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
         try (Connection c = DataSource.getConnection()) {
 
             c.setAutoCommit(false);
-            PreparedStatement statement = c.prepareStatement("UPDATE Productbatch WHERE ProduktbatchID = (?) SET status = (?), Udløbsdato = (?)");
+            PreparedStatement statement = c.prepareStatement("UPDATE Produktbatch SET status = (?), Udløbsdato = (?) WHERE ProduktbatchID = (?) ");
 
 
-            PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Produktbatch_beskrivelse WHERE BatchType = (?)");
-            statement1.setString(1, productBatchDTO.getProductName());
+            PreparedStatement statement1 = c.prepareStatement("SELECT * FROM Opskrifter WHERE opskriftID = ? AND versionsnummer = ?");
+            statement1.setInt(1, productBatchDTO.getRecipeID());
+            statement1.setInt(2, productBatchDTO.getVersionsnummer());
+
             ResultSet resultset1 = statement1.executeQuery();
 
-
-            statement.setInt(1, productBatchDTO.getProductBatchID());
-            statement.setString(2, "finished");
+            statement.setString(1, "færdig");
 
             if (resultset1.next()) {
                 LocalDate localDate = LocalDate.now();
                 LocalDate localDate1 = localDate.plusDays(resultset1.getInt("Opbevarings_dage"));
-                statement.setDate(3, Date.valueOf(localDate1));
+                statement.setDate(2, Date.valueOf(localDate1));
             }
+
+            statement.setInt(3, productBatchDTO.getProductBatchID());
 
             int row = statement.executeUpdate();
             c.commit();

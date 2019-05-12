@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class IngredientListDTO implements Serializable, IIngredientListDTO {
+public class IngredientDTO implements Serializable, IIngredientDTO {
 
     private String CommodityName;
     private double amount;
     private int IngredientListID;
-
+    private int versionsnummer;
     @Override
     public String getCommodityName() {
         return CommodityName;
@@ -30,6 +30,14 @@ public class IngredientListDTO implements Serializable, IIngredientListDTO {
         this.amount = amount;
     }
 
+    public void setVersionsnummer(int versionsnummer) {
+        this.versionsnummer = versionsnummer;
+    }
+
+    public int getVersionsnummer() {
+        return versionsnummer;
+    }
+
     @Override
     public int getIngredientListID() {
         return IngredientListID;
@@ -40,13 +48,14 @@ public class IngredientListDTO implements Serializable, IIngredientListDTO {
         this.IngredientListID = ingredientlistID;
     }
 
-    public IIngredientListDTO makeIngredientListFromResultset(ResultSet resultSet) throws SQLException {
+    public IIngredientDTO makeIngredientListFromResultset(ResultSet resultSet) throws SQLException {
 
-        IIngredientListDTO IngredientListDTO = new IngredientListDTO();
+        IIngredientDTO IngredientListDTO = new IngredientDTO();
 
-        IngredientListDTO.setCommodityName(resultSet.getString("Råvarenavn"));
+        IngredientListDTO.setCommodityName(resultSet.getString("Råvare_navn"));
         IngredientListDTO.setAmount(resultSet.getDouble("Mængde"));
-        IngredientListDTO.setIngredientListID(resultSet.getInt("Ingrediensliste ID"));
+        IngredientListDTO.setIngredientListID(resultSet.getInt("IngListeID"));
+        IngredientListDTO.setVersionsnummer(resultSet.getInt("versionsnummer"));
 
         return IngredientListDTO;
     }

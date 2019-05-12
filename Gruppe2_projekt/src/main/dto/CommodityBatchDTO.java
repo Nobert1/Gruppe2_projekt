@@ -83,11 +83,10 @@ public class CommodityBatchDTO implements Serializable, ICommodityBatchDTO {
         ICommodityBatchDTO commodityBatchDTO = new CommodityBatchDTO();
 
         commodityBatchDTO.setBatchID(resultSet.getInt("BatchID"));
-        commodityBatchDTO.setProducerName(resultSet.getString("Producentnavn"));
-        commodityBatchDTO.setCommodityName(resultSet.getString("Råvarenavn"));
-        commodityBatchDTO.setActualAmount(resultSet.getDouble("Indkøbt_mængde"));
-        commodityBatchDTO.setOriginalAmount(resultSet.getDouble("Rest_mængde"));
-        commodityBatchDTO.setRemainder(resultSet.getBoolean("Er_rest"));
+        commodityBatchDTO.setProducerName(resultSet.getString("producentnavn"));
+        commodityBatchDTO.setActualAmount(resultSet.getDouble("Mængde"));
+        commodityBatchDTO.setCommodityName(resultSet.getString("Råvare_navn"));
+        commodityBatchDTO.setRemainder(resultSet.getBoolean("rest"));
 
         return commodityBatchDTO;
     }

@@ -3,7 +3,7 @@ package dto;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface IIngredientListDTO {
+public interface IIngredientDTO {
 
     double getAmount();
 
@@ -17,6 +17,8 @@ public interface IIngredientListDTO {
 
     void setCommodityName(String name);
 
-    IIngredientListDTO makeIngredientListFromResultset(ResultSet resultSet) throws SQLException;
+    IIngredientDTO makeIngredientListFromResultset(ResultSet resultSet) throws SQLException;
 
+    public void setVersionsnummer(int versionsnummer);
+    public int getVersionsnummer();
 }

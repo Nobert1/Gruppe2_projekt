@@ -13,8 +13,18 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
     private Date changeDate;
     private int versionnumber;
     private String status;
-    private Double volume;
-    private List<IIngredientListDTO> ingredientListDTOList;
+    private List<IIngredientDTO> ingredientListDTOList;
+    private int durability;
+
+    @Override
+    public int getDurability() {
+        return durability;
+    }
+
+    @Override
+    public void setDurability(int durability) {
+        this.durability = durability;
+    }
 
     public Date getChangeDate() {
         return changeDate;
@@ -24,9 +34,9 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
         return status;
     }
 
-    public List<IIngredientListDTO> getIngredientListDTOList() { return ingredientListDTOList; }
+    public List<IIngredientDTO> getIngredientListDTOList() { return ingredientListDTOList; }
 
-    public void setIngredientListDTOList(List<IIngredientListDTO> ingredientListDTOList) { this.ingredientListDTOList = ingredientListDTOList; }
+    public void setIngredientListDTOList(List<IIngredientDTO> ingredientListDTOList) { this.ingredientListDTOList = ingredientListDTOList; }
 
     public int getRecipeID() {
         return recipeID;
@@ -40,9 +50,6 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
         return ProductName;
     }
 
-    public double getVolume() {
-        return volume;
-    }
 
     //Setter functions
 
@@ -58,9 +65,6 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
         ProductName = productName;
     }
 
-    public void setVolume(Double volume) {
-        this.volume = volume;
-    }
 
     public void setRecipeID(int recipeID) {
         this.recipeID = recipeID;
@@ -75,12 +79,12 @@ public class RecipeDTO implements Serializable, IRecipeDTO {
 
         IRecipeDTO recipeDTO = new RecipeDTO();
 
-        recipeDTO.setStatus (resultSet.getString("Status"));
+        recipeDTO.setStatus (resultSet.getString("status"));
         recipeDTO.setChangeDate(resultSet.getDate("Ændringsdato")); //TODO: Implementer dato format
         recipeDTO.setProductName(resultSet.getString("Produktnavn"));
-        recipeDTO.setVolume(resultSet.getDouble("Volumen"));
-        recipeDTO.setRecipeID(resultSet.getInt("opskrift ID"));
+        recipeDTO.setRecipeID(resultSet.getInt("opskriftID"));
         recipeDTO.setVersionnumber(resultSet.getInt("Versionsnummer"));
+        recipeDTO.setDurability(resultSet.getInt("Opbevarings_dage"));
 
         //TODO: Implementer setfunktion af CommodityBatchListe.
 

@@ -12,17 +12,18 @@ public interface IRecipeDTO {
     int getRecipeID();
     int getVersionnumber();
     String getProductName();
-    double getVolume();
+    public int getDurability();
+    public void setDurability(int durability);
+
 
     void setStatus(String status);
     void setChangeDate(Date changeDate);
     void setProductName(String productName);
-    void setVolume(Double volume);
     void setRecipeID(int recipeID);
     void setVersionnumber(int versionnumber);
 
-    List<IIngredientListDTO> getIngredientListDTOList();
-    void setIngredientListDTOList(List<IIngredientListDTO> ingredientListDTOList);
+    List<IIngredientDTO> getIngredientListDTOList();
+    void setIngredientListDTOList(List<IIngredientDTO> ingredientListDTOList);
     //TODO: Liste skal implementeres i klassen.
 
     IRecipeDTO makeRecipeFromResultset(ResultSet resultSet) throws SQLException;
