@@ -47,11 +47,11 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
                     double withdrawn = 0;
 
-                    do{
+                    while(withdrawn <= resultSet.getDouble("Mængde") * 0.98 || resultSet.getDouble("Mængde") * 1.02 <= withdrawn){
                         System.out.println("Hvor meget afvejede du? ");
                         withdrawn = resultSet.getDouble("Mængde");
                         System.out.println("Den afvejede mængde er ikke indenfor grænserne af den ønskede væridi, prøv igen ");
-                    }while(withdrawn <= resultSet.getDouble("Mængde") * 0.98 && resultSet.getDouble("Mængde") * 1.02 >= withdrawn);
+                    }
 
 
                     statement1.setInt(1, commodityBatchDTO.getBatchID());

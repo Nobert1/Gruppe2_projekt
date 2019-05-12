@@ -21,6 +21,8 @@ public class DB_Controller {
         boolean accessGranted = false;
         boolean valid = false;
         int rolleValg = 0;
+
+       //only for testing purposes BABY!
         AdminstratorDAO admin = new AdminstratorDAO();
         IUserDTO testUser = new userDTO();
         testUser.setUserId(13);
@@ -75,7 +77,7 @@ public class DB_Controller {
                 accessGranted = true;
             }
 
-        }while(accessGranted);
+        }while(!accessGranted);
 
         //TODO: Hvis godkendt, sæt bruger som tilsvarende DAO.
 
