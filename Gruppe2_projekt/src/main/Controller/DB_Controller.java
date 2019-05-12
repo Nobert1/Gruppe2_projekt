@@ -1,7 +1,9 @@
 package Controller;
 
 import dao.*;
+import dto.IProductBatchDTO;
 import dto.IUserDTO;
+import dto.ProductBatchDTO;
 import dto.UserDTO;
 import exception.DALException;
 
@@ -166,7 +168,7 @@ public class DB_Controller {
 
     }
 
-    public void Laborant(LaborantDAO user) {
+    public void Laborant(LaborantDAO user)throws DALException{
        int choice = 0;
        do {
            System.out.println("You are logged in as Laborant\nSee production Requests - Press 1\nSee active production - Press 2" +
@@ -175,6 +177,10 @@ public class DB_Controller {
            choice = scan.nextInt();
            switch (choice) {
                case 1:
+                   IProductBatchDTO productBatchDTO = new ProductBatchDTO();
+                   productBatchDTO.setBatchID(1);
+
+                   user.prepareProductBatch(productBatchDTO);
 
                case 2:
 
