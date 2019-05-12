@@ -27,9 +27,10 @@ public class DB_Controller {
         admin.deleteUser(13);
         admin.createUser(testUser);
 
-
+//TODO: translate to danish lol
         do {
-            System.out.println("Ønsker du at agere som\nAdministrator tryk 1\nLaborant tryk 2\nPharmaceut tryk 3\nProduktionsleder tryk 4");
+            System.out.println("Ønsker du at agere som\nAdministrator - tryk 1\nLaborant - tryk 2\nPharmaceut - tryk 3\nProduktionsleder - tryk 4" +
+                    "\nExit - Tryk 5");
             Scanner scan = new Scanner(System.in);
             rolleValg = scan.nextInt();
 
@@ -74,6 +75,8 @@ public class DB_Controller {
                         Produktionsleder(user);
                     }
                     break;
+                case 5:
+                    System.exit(0);
                 default:
                     System.out.println("Det indtastede var ikke et af de fire valg.");
             }
@@ -150,7 +153,7 @@ public class DB_Controller {
         return validated;
     }
 
-    public void admin(AdminstratorDAO user) {
+    public void admin(AdminstratorDAO user)throws DALException {
        int choice = 0;
         do {
            System.out.println("You are logged in as Admin.\nCreate user - Press 1\nDelete user - Press 2\nChange admin rights for user - press 3" +
@@ -159,11 +162,11 @@ public class DB_Controller {
            choice = scan.nextInt();
            switch (choice) {
                case 1:
-
+                   user.createUserBasic();
                case 2:
-
+                   user.deleteUserBasic();
                case 3:
-
+                   user.changeAdminStatus();
                default:
 
 

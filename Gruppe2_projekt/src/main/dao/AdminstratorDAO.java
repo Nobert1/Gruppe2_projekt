@@ -3,12 +3,13 @@ package dao;
 import dto.IUserDTO;
 import dto.UserDTO;
 import exception.*;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
 
@@ -46,9 +47,84 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
     }
 
     public void createUserBasic()throws DALException{
-        IUserDTO user = new UserDTO();
+        try(Connection c = DataSource.getConnection()) {
+            c.setAutoCommit(false);
+            AdminstratorDAO adminUser = new AdminstratorDAO();
+            IUserDTO user = new UserDTO();
+            Scanner scan = new Scanner(System.in);
+            System.out.println("Enter Name:");
+            String name = scan.nextLine();
+            System.out.println("Enter Initials");
+            String ini = scan.nextLine();
+            String role = "";
+            List<String> roles = new ArrayList<>();
+            int choice = 1;
 
+            do {
+                System.out.println("Vælg role: \nLaborant - Tryk 1\nPharmaceut - Tryk 2\nProduktionsleder - Tryk 3");
+                choice = scan.nextInt();
+                switch (choice) {
+                    case 1:
+                        System.out.println("Laborant rolle tilføjet");
+                        roles.add("Laborant");
+                        break;
+                    case 2:
+                        System.out.println("Pharmaceut rolle tilføjet");
+                        roles.add("Pharmaceut");
+                        break;
+                    case 3:
+                        System.out.println("Produktionsleder rolle tilføjet");
+                        roles.add("Produktionsleder");
+                        break;
+                    default:
+                        System.out.println("Ikke en valgmulighed");
 
+                }
+            } while (choice < 1 || choice > 3);
+
+            System.out.println("Skal brugeren være administrator?\nJa - Tryk 1\nNej - Tryk 2");
+            int admin = scan.nextInt();
+            if (admin == 1) {
+                System.out.println("Brugeren er nu administrator");
+                roles.add("Administrator");
+            } else {
+                System.out.println("Brugeren er ikke valgt som administrator");
+            }
+
+            int brugerID = 0;
+            Boolean chosenID = false;
+
+            while(!chosenID) {
+                System.out.println("Vælg et 4 cifret brugerID");
+                brugerID = scan.nextInt();
+                if (String.valueOf(brugerID).length() == 4 && brugerID >= 0) {
+                    PreparedStatement rolesstatement = c.prepareStatement("SELECT BrugerID FROM Brugere");
+                    ResultSet resultSet = rolesstatement.executeQuery();
+                    c.commit();
+                    if(resultSet.next()) {
+                        while (resultSet.next()) {
+                            if (brugerID == resultSet.getInt("BrugerID")) {
+                                System.out.println("Bruger ID'et er optaget");
+                            } else {
+                                System.out.println("Bruger ID valgt: " + brugerID);
+                                chosenID = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("Vælg et 4 cifret bruger ID");
+                }
+            }
+            user.setUserName(name);
+            user.setIni(ini);
+            user.setRoles(roles);
+            user.setUserId(brugerID);
+            adminUser.createUser(user);
+
+        }catch (SQLException e) {
+            throw new DALException(e.getMessage());
+        }
 
     }
 
@@ -66,14 +142,16 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             statement.setString(2, user.getIni());
             List<String> roleStrings = user.getRoles();
 
+            PreparedStatement getRolesStatement = c.prepareStatement("DELETE FROM Roller WHERE userId = ?");
+            getRolesStatement.setInt(1,user.getUserId());
+            getRolesStatement.executeUpdate();
 
-            PreparedStatement statement2 = c.prepareStatement("UPDATE Roller SET Rolle = (?), BrugerID = (?)" );
-            statement2.setInt(2, user.getUserId());
-            for (int i = 0; i < roleStrings.size(); i++) {
-                statement2.setString(1, roleStrings.get(i));
-                statement2.addBatch();
+            for(String roles: user.getRoles()){
+                PreparedStatement statementRoles = c.prepareStatement("INSERT INTO Roller VALUES(?,?)");
+                statementRoles.setInt(1, user.getUserId());
+                statementRoles.setString(2,roles);
+                statementRoles.executeUpdate();
             }
-            int[] rows2 = statement2.executeBatch();
             int rows = statement.executeUpdate();
 
             c.commit();
@@ -98,6 +176,66 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             throw new DALException(e.getMessage());
         }
     }
+
+    public void deleteUserBasic() throws DALException {
+        try (Connection c = DataSource.getConnection()) {
+            c.setAutoCommit(false);
+            Scanner scan = new Scanner(System.in);
+            AdminstratorDAO adminUser = new AdminstratorDAO();
+            System.out.println("Indtast bruger ID for den bruger du ønsker at slette");
+            int userID = scan.nextInt();
+            PreparedStatement rolesstatement = c.prepareStatement("SELECT brugerNavn FROM Brugere WHERE BrugerID = ?");
+            rolesstatement.setInt(1, userID);
+            ResultSet resultSet = rolesstatement.executeQuery();
+            c.commit();
+            String name ="";
+            if(resultSet.next()){
+                name = resultSet.getString("brugerNavn");
+                System.out.println("Er du sikker du vil slette brugeren " + name + "\nJa - Tryk 1\nNej - Tryk 2");
+                int deleteChoice = scan.nextInt();
+                if(deleteChoice == 1){
+                    adminUser.deleteUser(userID);
+                    System.out.println(name + " er slettet.");
+                } else {
+                    System.out.println("Brugeren er ikke slettet");
+                }
+            } else {
+                System.out.println("Brugeren findes ikke");
+            }
+        } catch (SQLException e){
+            throw new DALException(e.getMessage());
+        }
+
+    }
+
+    public void changeAdminStatus()throws DALException{
+
+            Scanner scan = new Scanner(System.in);
+            AdminstratorDAO adminUser = new AdminstratorDAO();
+            System.out.println("Indtast bruger ID for den bruger at ændre admin status for:");
+            int userID = scan.nextInt();
+            IUserDAO UserDAO = new UserDAO();
+            IUserDTO user = UserDAO.getUser(userID);
+            if(user.getRoles().size() > 1) {
+                System.out.println(user.getUserName() + " er administrator. Vil du fjerne admin privilegier for denne bruger?" +
+                        "\nJa - Tryk 1\nNej - Tryk 2");
+                int choice = scan.nextInt();
+                if (choice == 1) {
+                    user.getRoles().remove(2);
+                }
+            } else {
+                    System.out.println(user.getUserName() + " er ikke administrator. Vil du give brugeren administrator privilegier?" +
+                            "\nJa - tryk 1\nNej - Tryk 2");
+                    int choice = scan.nextInt();
+                    if(choice == 1){
+                        String s = "Admininstrator";
+                        user.getRoles().add(s);
+                    }
+                }
+                adminUser.updateUser(user);
+
+            }
+
 
 }
 
