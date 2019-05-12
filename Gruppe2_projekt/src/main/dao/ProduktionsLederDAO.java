@@ -167,13 +167,13 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
 
             //Det her skal vel være en join af en art...... skal vidst også oprette det objekt der bliver sat ind.
 
-            PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, ?, null, ?, ?, ?)");
+            PreparedStatement statement2 = c.prepareStatement("INSERT INTO Produktbatch VALUES (?, null, ?, ?, ?)");
             statement2.setInt(1, productBatchDTO.getProductBatchID());
-            statement2.setString(2, productBatchDTO.getProductName());
+
             //Den sidste værdi sættes til null da det er udløbsdato. Udløbsdato er først fastlagt når produktet er klar.
+            statement2.setInt(2, productBatchDTO.getRecipeID());
             statement2.setInt(3, productBatchDTO.getRecipeID());
-            statement2.setInt(4, productBatchDTO.getRecipeID());
-            statement2.setString(5, "Awaiting production");
+            statement2.setString(4, productBatchDTO.getStatus());
 
 
             int rows = statement2.executeUpdate();
@@ -272,9 +272,10 @@ public class ProduktionsLederDAO extends UserDAO implements IProduktionsLederDAO
             c.setAutoCommit(false);
             PreparedStatement statement = c.prepareStatement("SELECT Råvare_navn, Mængde FROM Ingrediensliste i " +
                     "LEFT JOIN Opskrifter o ON " +
-                    "o.opskriftID = i.IngListeID AND i.versionsnummer = o.versionsnummer WHERE o.Produktnavn = (?) AND o.status = \"aktiv\"");
+                    "o.opskriftID = i.IngListeID AND i.versionsnummer = o.versionsnummer WHERE o.opskriftID = (?) AND o.versionsnummer = ?");
 
-            statement.setString(1, productBatchDTO.getProductName());
+            statement.setInt(1, productBatchDTO.getRecipeID());
+            statement.setInt(2, productBatchDTO.getVersionsnummer());
             ResultSet resultset = statement.executeQuery();
 
             //Statement virker på workbench, test om det også virker her

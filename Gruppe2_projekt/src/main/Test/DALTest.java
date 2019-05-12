@@ -182,7 +182,6 @@ public class DALTest {
 
             IProductBatchDTO productBatchDTO = new ProductBatchDTO();
             productBatchDTO.setProductBatchID(1);
-            productBatchDTO.setProductName("Ipren");
             productBatchDTO.setStatus("Afventer_produktion");
             productBatchDTO.setVersionsnummer(1);
             productBatchDTO.setRecipeID(1);
@@ -221,7 +220,7 @@ public class DALTest {
             produktionsLederDAO.DeleteProductBatch(productBatchDTO.getProductBatchID());
             produktionsLederDAO.CreateProductBatch(productBatchDTO);
             IProductBatchDTO productBatchDTO1 = produktionsLederDAO.getProductBatch(1);
-            assertEquals(productBatchDTO.getProductName(), productBatchDTO1.getProductName());
+            assertEquals(productBatchDTO.getStatus(), productBatchDTO1.getStatus());
 
             List<ICommodityBatchDTO> commodityBatchDTOList1 = new ArrayList<>();
             commodityBatchDTOList1 = produktionsLederDAO.getCommodityBatches(productBatchDTO);

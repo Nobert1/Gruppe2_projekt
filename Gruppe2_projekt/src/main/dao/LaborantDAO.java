@@ -28,9 +28,10 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
 
             PreparedStatement statement = c.prepareStatement("SELECT Råvare_navn, Mængde FROM Ingrediensliste JOIN Opskrifter " +
                     "ON Opskrifter.opskriftID = Ingrediensliste.IngListeID " +
-                    "WHERE Opskrifter.Produktnavn = (?) AND Opskrifter.status = \"aktiv\"");
+                    "WHERE Opskrifter.opskriftID = (?) AND Opskrifter.versionsnummer = (?)");
 
-            statement.setString(1, productBatchDTO.getProductName());
+            statement.setInt(1, productBatchDTO.getRecipeID());
+            statement.setInt(2, productBatchDTO.getVersionsnummer());
             ResultSet resultSet = statement.executeQuery();
 
 
@@ -49,10 +50,11 @@ public class LaborantDAO extends UserDAO implements ILaborantDAO {
                     while (true) {
                         System.out.println("Hvor meget afvejede du? ");
                         withdrawen = resultSet.getDouble("Mængde");
+                        //Det her burde være scanner validering, men vi kører tests så det her står i stedet.
                         if (withdrawen >= resultSet.getDouble("Mængde") * 0.98 && resultSet.getDouble("Mængde") * 1.02 >= withdrawen) {
                             break;
                         }
-                        System.out.println("Den afvejede mængde er ikke indenfor grænserne af den ønskede væridi, prøv igen ");
+                        System.out.println("Den afvejede mængde er ikke indenfor grænserne af den ønskede værdi, prøv igen ");
                     }
 
                     statement1.setInt(1, commodityBatchDTO.getBatchID());

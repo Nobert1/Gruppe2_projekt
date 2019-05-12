@@ -20,7 +20,6 @@ public interface IProductBatchDTO {
 
     int getProductBatchID();
 
-    String getProductName();
 
     List<ICommodityBatchDTO> getCommodityBatchDTOList();
 
@@ -28,7 +27,6 @@ public interface IProductBatchDTO {
 
     void setCommodityBatchDTOList(List<ICommodityBatchDTO> commodityBatchDTOList);
 
-    void setProductName(String productname);
 
     void setProductBatchID(int batchID);
 

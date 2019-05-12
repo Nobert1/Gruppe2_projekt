@@ -9,7 +9,6 @@ import java.util.List;
 public class ProductBatchDTO implements Serializable, IProductBatchDTO {
 
     private int batchID;
-    private String productName;
     private java.sql.Date expirationDate;
     private String status;
     private List<ICommodityBatchDTO> commodityBatchDTOList;
@@ -64,11 +63,6 @@ public class ProductBatchDTO implements Serializable, IProductBatchDTO {
     }
 
     @Override
-    public String getProductName() {
-        return productName;
-    }
-
-    @Override
     public String getStatus() {
         return status;
     }
@@ -83,10 +77,6 @@ public class ProductBatchDTO implements Serializable, IProductBatchDTO {
         //TODO: Implementer expiration date i forhold til SQL format.
     }
 
-    @Override
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
 
     @Override
     public void setProductBatchID(int batchID) {
@@ -103,7 +93,6 @@ public class ProductBatchDTO implements Serializable, IProductBatchDTO {
 
             IProductBatchDTO productBatchDTO = new ProductBatchDTO();
             productBatchDTO.setProductBatchID(resultSet.getInt("ProduktbatchID"));
-            productBatchDTO.setProductName(resultSet.getString("Produktnavn"));
             productBatchDTO.setExpirationDate(resultSet.getDate("Udløbsdato"));
             productBatchDTO.setStatus(resultSet.getString("status"));
             productBatchDTO.setRecipeID(resultSet.getInt("opskriftID"));
