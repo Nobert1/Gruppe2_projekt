@@ -15,18 +15,6 @@ public class DB_Controller {
         boolean valid = false;
         int rolleValg = 0;
 
-        //only for testing purposes BABY!
-        AdminstratorDAO admin = new AdminstratorDAO();
-        IUserDTO testUser = new UserDTO();
-        testUser.setUserId(13);
-        testUser.setUserName("Per Hansen");
-        testUser.setIni("PH");
-        ArrayList<String> roles = new ArrayList();
-        roles.add("Administrator");
-        testUser.setRoles(roles);
-        admin.deleteUser(13);
-        admin.createUser(testUser);
-
 //TODO: translate to danish lol
         do {
             System.out.println("Ønsker du at agere som\nAdministrator - tryk 1\nLaborant - tryk 2\nPharmaceut - tryk 3\nProduktionsleder - tryk 4" +

@@ -16,7 +16,7 @@ public class UserDAO implements IUserDAO {
     @Override
     public IUserDTO getUser(int userId) throws DALException {
 
-        String SQL = "SELECT * FROM Brugere JOIN Roller ON Brugere.BrugerID = Roller.BrugerID WHERE (?) = (?)";
+        String SQL = "SELECT * FROM Brugere  WHERE BrugerID = (?)";
         //TODO Implement this - should retrieve a user from db and parse it to a UserDTO
 
 
@@ -24,15 +24,12 @@ public class UserDAO implements IUserDAO {
             c.setAutoCommit(false);
             PreparedStatement statement = c.prepareStatement(SQL);
             statement.setInt(1, userId);
-            //Redundant kode.....
-            statement.setInt(2, userId);
 
             ResultSet resultset = statement.executeQuery();
             IUserDTO user = null;
             if (resultset.next()){
                 user = makeUserFromResultset(resultset);
             }
-            //TODO: Make a user from the resultset
             c.commit();
             return user;
         } catch (SQLException e) {
@@ -62,18 +59,33 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-    private IUserDTO makeUserFromResultset(ResultSet resultSet) throws SQLException {
-        IUserDTO user = new UserDTO();
-        user.setUserId(resultSet.getInt("BrugerID"));
-        user.setUserName(resultSet.getString("brugerNavn"));
-        user.setIni(resultSet.getString("Initialer"));
-        //Extract roles as String
-        String roleString = resultSet.getString("Rolle");
+    private IUserDTO makeUserFromResultset(ResultSet resultSet)throws DALException {
+        try (Connection c = DataSource.getConnection()) {
+            IUserDTO user = new UserDTO();
+            user.setUserId(resultSet.getInt("BrugerID"));
+            user.setUserName(resultSet.getString("brugerNavn"));
+            user.setIni(resultSet.getString("Initialer"));
+            //Extract roles as String
+
+            c.setAutoCommit(false);
+            PreparedStatement statement = c.prepareStatement("SELECT * FROM Roller WHERE BrugerID = ?");
+            statement.setInt(1, resultSet.getInt("BrugerID"));
+            ResultSet resultSetRoles = statement.executeQuery();
+            List<String> roleList = new ArrayList<>();
+            c.commit();
+            while (resultSetRoles.next()) {
+                roleList.add(resultSetRoles.getString("Rolle"));
+            }
+            user.setRoles(roleList);
+            return user;
+        } catch (SQLException e) {
+            throw new DALException(e.getMessage());
+        }
+    }
+}
+/* String roleString = resultSet.getString("Rolle");
         //Split string by ;
         String[] roleArray = roleString.split(";");
         //Convert to List
         List<String> roleList = Arrays.asList(roleArray);
-        user.setRoles(roleList);
-        return user;
-    }
-}
+        user.setRoles(roleList);*/

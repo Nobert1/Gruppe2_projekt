@@ -211,24 +211,24 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
             System.out.println("Indtast bruger ID for den bruger at ændre admin status for:");
             int userID = scan.nextInt();
             IUserDAO UserDAO = new UserDAO();
-            IUserDTO user = UserDAO.getUser(userID);
-            if(user.getRoles().size() > 1) {
-                System.out.println(user.getUserName() + " er administrator. Vil du fjerne admin privilegier for denne bruger?" +
+            IUserDTO tempuser = UserDAO.getUser(userID);
+            if(tempuser.getRoles().size() > 1) {
+                System.out.println(tempuser.getUserName() + " er administrator. Vil du fjerne admin privilegier for denne bruger?" +
                         "\nJa - Tryk 1\nNej - Tryk 2");
                 int choice = scan.nextInt();
                 if (choice == 1) {
-                    user.getRoles().remove(2);
+                    tempuser.getRoles().remove(2);
                 }
             } else {
-                    System.out.println(user.getUserName() + " er ikke administrator. Vil du give brugeren administrator privilegier?" +
+                    System.out.println(tempuser.getUserName() + " er ikke administrator. Vil du give brugeren administrator privilegier?" +
                             "\nJa - tryk 1\nNej - Tryk 2");
                     int choice = scan.nextInt();
                     if(choice == 1){
                         String s = "Admininstrator";
-                        user.getRoles().add(s);
+                        tempuser.getRoles().add(s);
                     }
                 }
-                adminUser.updateUser(user);
+                adminUser.updateUser(tempuser);
 
             }
 
