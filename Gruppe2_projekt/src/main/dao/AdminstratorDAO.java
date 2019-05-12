@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+@SuppressWarnings("Duplicates")
 public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
 
     //TODO as of 05-05-2019 er denne her præcis den samme som den var i anden jdbc aflevering. Spørgsmålet er om den også skal have noget rolle validering?
@@ -20,24 +21,19 @@ public class AdminstratorDAO extends UserDAO implements IAdminstratorDAO {
         try (Connection c = DataSource.getConnection()){
             c.setAutoCommit(false);
             PreparedStatement usersstatement = c.prepareStatement("INSERT INTO Brugere VALUES (?, ?, ?)");
-            String roleString = String.join(";", user.getRoles());
             usersstatement.setInt(1, user.getUserId());
             usersstatement.setString(2, user.getUserName());
             usersstatement.setString(3, user.getIni());
 
 
-            String[] roleArray = roleString.split(";");
-            List<String> roleList = Arrays.asList(roleArray);
-            PreparedStatement rolesstatement = c.prepareStatement("INSERT INTO Roller VALUES (?, ?)");
-
-            for (int i = 0; i < roleList.size(); i++) {
-                rolesstatement.setInt(1, user.getUserId());
-                rolesstatement.setString(2, roleList.get(i));
-                rolesstatement.addBatch();
+            for(String role: user.getRoles()) {
+                PreparedStatement statementRoles = c.prepareStatement("INSERT INTO Roller VALUES(?,?)");
+                statementRoles.setInt(1,user.getUserId());
+                statementRoles.setString(2,role);
+                statementRoles.executeUpdate();
             }
 
             int userrows = usersstatement.executeUpdate();
-            int rolesrow = rolesstatement.executeUpdate();
 
             c.commit();
 

@@ -163,10 +163,13 @@ public class DB_Controller {
            switch (choice) {
                case 1:
                    user.createUserBasic();
+                   break;
                case 2:
                    user.deleteUserBasic();
+                   break;
                case 3:
                    user.changeAdminStatus();
+                   break;
                default:
 
 
